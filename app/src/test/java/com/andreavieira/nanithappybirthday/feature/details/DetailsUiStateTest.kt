@@ -5,6 +5,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
 
+/** Verifies when entered details permit continuing to the birthday screen. */
 class DetailsUiStateTest {
     private val birthday = LocalDate.of(2025, 1, 15)
 

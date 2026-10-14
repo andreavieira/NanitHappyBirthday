@@ -4,7 +4,7 @@ Android implementation of Nanit's Happy Birthday assignment using Kotlin and Jet
 
 ## Status
 
-Stage 1 details UI is implemented: name, birthday picker, picture placeholder and required-field validation. Durable persistence, photo selection and birthday-screen navigation follow in stages 2-3.
+Stage 1 is accepted. Stage 2 adds persistent name/birthday, gallery and camera selection, and durable private photo storage; review is pending. Birthday-screen navigation follows in stage 3.
 
 ## Build and run
 
@@ -14,7 +14,7 @@ Open this directory in Android Studio, select JDK 17 as the Gradle JDK, sync, an
 ./gradlew assembleDebug testDebugUnitTest lintDebug
 ```
 
-Debug assembly, three form-validation unit tests and lint pass. The details screen was installed and launched on an emulator without a crash. Stage 1 passed emulator review and is marked by the stage-1 tag.
+Stage 1 is marked by the stage-1 tag. Stage 2 validation includes debug assembly, 13 unit tests, lint, an isolated on-device DataStore/photo-storage test, and emulator gallery/camera selection and cancellation checks.
 
 ## Implementation
 
@@ -39,4 +39,8 @@ Single activity and app module. Compose screens use ViewModel/StateFlow and life
 
 Use focused commits and stage tags after validation. Supplied Nanit artwork is proprietary and restricted to this assignment.
 
-At this stage, Show birthday screen confirms that details are ready; the birthday destination is implemented in stage 3. SavedStateHandle restores the form after configuration changes/system recreation, but durable relaunch persistence belongs to stage 2.
+At this stage, Show birthday screen confirms that details are ready; the birthday destination is implemented in stage 3. DataStore restores the form after relaunch. Name and birthday save when Show birthday screen is tapped. A save failure shows a snackbar and permits continuation with the in-memory draft. Initial load failures offer Retry. Photo imports retain the existing picture on failure or cancellation; images over 20 MB are rejected.
+
+## Device checks
+
+With an emulator/device connected, run `./gradlew connectedDebugAndroidTest` for the isolated storage recreation test. For manual review, edit name/date, select a gallery picture, force-stop and reopen the app, then check camera capture and cancellation. The app uses the system photo picker (with document-picker fallback) and external camera capture; broad gallery/camera permissions are not requested. Personal test images belong on the device only and are not repository assets.

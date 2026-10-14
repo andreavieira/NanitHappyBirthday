@@ -4,7 +4,7 @@ Start with one activity and one app module. Add feature/details and feature/birt
 
 Installed foundation: Kotlin 2.1.20, AGP 8.9.2, Gradle 8.11.1, Java 17 bytecode, compile/target SDK 35, minimum SDK 28, Compose BOM 2025.04.01, Material3 1.4.0, Activity Compose 1.10.1, Lifecycle 2.8.7, Coroutines 1.10.2, JUnit4. Versions are pinned for a reproducible build.
 
-Add Preferences DataStore in stage 2 for a small profile; copy selected images into app-private storage for durable access. Use Activity Result photo picker and TakePicture with FileProvider. Add Coil only when displaying photo URIs. For two screens, decide navigation during stage 3. Use manual constructor injection; Hilt, Room, Retrofit, and multi-module infrastructure are unnecessary at present. Date arithmetic uses java.time with an injectable clock and boundary tests. Select the visual variant on screen entry, not recomposition. Sharing should render a separate card composable without controls.
+Stage 2 uses Preferences DataStore 1.1.7 for profile fields and filenames, with copied images in app-private storage. Use Activity Result photo picker and TakePicture with FileProvider. Coil Compose 2.7.0 displays the private image with a circular center crop. For two screens, decide navigation during stage 3. Use manual constructor injection; Hilt, Room, Retrofit, and multi-module infrastructure are unnecessary at present. Date arithmetic uses java.time with an injectable clock and boundary tests. Select the visual variant on screen entry, not recomposition. Sharing should render a separate card composable without controls.
 
 Reference: https://developer.android.com/topic/architecture/recommendations
 
@@ -16,4 +16,16 @@ Use one reusable circular baby image component for both states: a filled, border
 
 MainActivity hosts the app theme and DetailsRoute. DetailsRoute collects ViewModel state, wires callbacks and hosts UI/platform interactions. DetailsScreen accepts immutable state and callbacks without depending on the ViewModel or an Activity. The platform date picker is created by a private UI helper; its Context stays outside the ViewModel.
 
-The date picker's maximum date is a UI constraint. Stage 2 will also validate profile writes at the repository boundary, using a controlled current date for tests, so restored values or other callers cannot bypass the rule.
+The date picker's maximum date is a UI constraint. The repository also validates profile writes against an injected Clock, so other callers cannot bypass the future-date rule.
+
+## Profile persistence
+
+NanitApplication owns one repository/DataStore instance. ProfileStore abstracts transactional metadata updates; PrivateProfilePhotos isolates ContentResolver/file operations on Dispatchers.IO. The ViewModel loads the persisted profile and holds name/date edits in memory until Show birthday screen is tapped. Photo imports run through a channel and persist immediately. DataStore updates preserve unrelated fields. Continuation requires a nonblank name and birthday and waits for active photo import or saving to finish.
+
+New photos are copied to unique private files and checked for image dimensions and a 20 MB size limit before their filenames are stored. Metadata write failure removes the uncommitted copy; successful replacement removes the previous file. FileProvider exposes only the camera cache directory. The shared camera helper retains the pending capture URI across recreation and cleans it after completion/cancellation. Successful copies do not depend on ongoing gallery URI permission.
+
+Name/date save failure returns a result for snackbar feedback and does not block continuation with the in-memory draft. Stage 3 must navigate regardless of save success. Initial load failures offer Retry. Photo/camera errors appear in a compact card with a close control and clear when Choose picture is tapped again; failed imports retain the old photo. Unsubmitted edits are lost if the process terminates.
+
+## Shared photo selection UI
+
+`ui/photo` contains the gallery launcher, camera capture launcher, and source-choice dialog for reuse by the details and birthday screens. These helpers expose callbacks without depending on a feature ViewModel or repository. The caller decides how to import and persist the selected image, and invokes the camera completion callback after import so temporary capture files can be removed safely. `platform/photo` owns FileProvider URI creation and file operations. The birthday-specific date picker stays in `feature/details` until another feature needs it.
