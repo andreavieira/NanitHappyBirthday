@@ -30,7 +30,7 @@ internal data class BirthdayShareAction(val isPreparing: Boolean, val launch: ()
 
 @Composable
 internal fun rememberBirthdayShareAction(
-    cardLayer: GraphicsLayer,
+    shareImageLayer: GraphicsLayer,
     padding: PaddingValues,
     onFailure: () -> Unit,
 ): BirthdayShareAction {
@@ -52,7 +52,7 @@ internal fun rememberBirthdayShareAction(
                             padding.calculateBottomPadding().roundToPx(),
                         )
                     }
-                    val imageUri = captureAndSaveBirthdayCard(context, cardLayer, systemInsets)
+                    val imageUri = captureAndSaveBirthdayCard(context, shareImageLayer, systemInsets)
                     context.startActivity(Intent.createChooser(BirthdaySharing.shareIntent(context, imageUri), context.getString(R.string.share_the_news)))
                 } catch (cancelled: CancellationException) {
                     throw cancelled
@@ -68,12 +68,12 @@ internal fun rememberBirthdayShareAction(
 
 private suspend fun captureAndSaveBirthdayCard(
     context: Context,
-    cardLayer: GraphicsLayer,
+    shareImageLayer: GraphicsLayer,
     systemInsets: Rect,
 ): Uri {
     // Wait for the latest photo/frame before capturing the artwork.
     withFrameNanos { }
-    val capturedBitmap = cardLayer.toImageBitmap().asAndroidBitmap()
+    val capturedBitmap = shareImageLayer.toImageBitmap().asAndroidBitmap()
     try {
         return withContext(Dispatchers.IO) {
             val cardBitmap = Bitmap.createBitmap(

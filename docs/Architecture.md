@@ -44,7 +44,7 @@ Use `python3 scripts/RunEmulatorTests.py` with the project's Gradle JDK configur
 
 ## Birthday sharing
 
-The screen records an invisible, unscrolled copy of the background and card content in a Compose GraphicsLayer. It reuses the same artwork composables and expands to the full content height on short screens. Back, camera and share controls are separate overlays. The sharing action waits for a rendered photo/frame, captures that layer, crops safe system insets, and writes a PNG off the main thread. FileProvider exposes only the dedicated share-cache directory through temporary read permission and ClipData. Each export gets a unique URI; exports older than one day are cleaned up on the next share. Cancelling the Sharesheet leaves the current theme and profile unchanged.
+BirthdayScreen displays the interactive birthday artwork and controls. BirthdayShareImageRenderer separately records an invisible, unscrolled copy of that artwork in shareImageLayer for PNG export. It reuses the same artwork composables and expands to the full content height on short screens. Back, camera and share controls are separate overlays. The sharing action waits for a rendered photo/frame, captures that layer, crops safe system insets, and writes a PNG off the main thread. FileProvider exposes only the dedicated share-cache directory through temporary read permission and ClipData. Each export gets a unique URI; exports older than one day are cleaned up on the next share. Cancelling the Sharesheet leaves the current theme and profile unchanged.
 
 ## Review recordings
 

@@ -43,9 +43,9 @@ fun BirthdayRoute(
     val photoPath = if (state.hasLoadedProfile) state.photoPath else initialPhotoPath
 
     // Only the artwork layer is recorded. Controls and system UI are excluded from the export.
-    val cardLayer = rememberGraphicsLayer()
+    val shareImageLayer = rememberGraphicsLayer()
     val scope = rememberCoroutineScope()
-    val sharing = rememberBirthdayShareAction(cardLayer, contentPadding) {
+    val sharing = rememberBirthdayShareAction(shareImageLayer, contentPadding) {
         scope.launch { snackbar.showSnackbar(context.getString(R.string.share_failed), withDismissAction = true) }
     }
     var photoReady by remember(photoPath) { mutableStateOf(photoPath == null) }
@@ -75,7 +75,7 @@ fun BirthdayRoute(
                 showPhotoPicker = true
             },
             photoChoiceEnabled = state.canEdit && state.pendingSaves == 0 && !sharing.isPreparing,
-            cardLayer = cardLayer,
+            shareImageLayer = shareImageLayer,
             onPhotoReady = { photoReady = it },
             shareEnabled = photoReady && state.pendingSaves == 0 && !sharing.isPreparing,
             onShare = sharing.launch,

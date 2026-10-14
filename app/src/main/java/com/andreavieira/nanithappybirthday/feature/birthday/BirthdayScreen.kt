@@ -81,11 +81,12 @@ fun BirthdayScreen(
     contentPadding: PaddingValues = PaddingValues(),
     onChoosePhoto: (() -> Unit)? = null,
     photoChoiceEnabled: Boolean = true,
-    cardLayer: GraphicsLayer? = null,
+    shareImageLayer: GraphicsLayer? = null,
     onShare: (() -> Unit)? = null,
     shareEnabled: Boolean = true,
     onPhotoReady: (Boolean) -> Unit = {},
 ) {
+    val age = birthdayAge(birthday, today)
     var photoBounds by remember { mutableStateOf(Rect.Zero) }
     var logoBottom by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
@@ -97,21 +98,30 @@ fun BirthdayScreen(
         val windowWidth = this.maxWidth
         val layoutHeight = windowHeight - contentPadding.calculateTopPadding() - contentPadding.calculateBottomPadding()
         BirthdayArtwork(
-            name, birthdayAge(birthday, today), photoPath, theme, contentPadding,
-            onShare != null, scrollState, layoutHeight,
-            { photoBounds = it }, { logoBottom = it },
+            name = name,
+            age = age,
+            photoPath = photoPath,
+            theme = theme,
+            contentPadding = contentPadding,
+            reserveShareSpace = onShare != null,
+            scrollState = scrollState,
+            layoutHeight = layoutHeight,
+            onPhotoBounds = { photoBounds = it },
+            onLogoBottom = { logoBottom = it },
         )
-        if (cardLayer != null) {
-            // Record an invisible, unscrolled copy at full content height; small-screen exports keep the heading.
-            val overflow = if (scrollState.maxValue == Int.MAX_VALUE) 0 else scrollState.maxValue
-            val exportHeight = windowHeight + with(density) { overflow.toDp() }
-            BirthdayArtwork(
-                name, birthdayAge(birthday, today), photoPath, theme, contentPadding,
-                onShare != null, null, layoutHeight, {}, {},
-                modifier = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
-                    .requiredSize(windowWidth, exportHeight)
-                    .clearAndSetSemantics { }
-                    .drawWithContent { cardLayer.record { this@drawWithContent.drawContent() } },
+        if (shareImageLayer != null) {
+            BirthdayShareImageRenderer(
+                name = name,
+                age = age,
+                photoPath = photoPath,
+                theme = theme,
+                contentPadding = contentPadding,
+                reserveShareSpace = onShare != null,
+                layoutHeight = layoutHeight,
+                windowWidth = windowWidth,
+                windowHeight = windowHeight,
+                scrollOverflowPx = scrollState.maxValue,
+                shareImageLayer = shareImageLayer,
                 onPhotoReady = onPhotoReady,
             )
         } else {
@@ -133,6 +143,44 @@ fun BirthdayScreen(
             BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(start = 4.dp, top = 4.dp))
         }
     }
+}
+
+@Composable
+private fun BirthdayShareImageRenderer(
+    name: String,
+    age: BirthdayAge,
+    photoPath: String?,
+    theme: BirthdayTheme,
+    contentPadding: PaddingValues,
+    reserveShareSpace: Boolean,
+    layoutHeight: Dp,
+    windowWidth: Dp,
+    windowHeight: Dp,
+    scrollOverflowPx: Int,
+    shareImageLayer: GraphicsLayer,
+    onPhotoReady: (Boolean) -> Unit,
+) {
+    val density = LocalDensity.current
+    val overflow = if (scrollOverflowPx == Int.MAX_VALUE) 0 else scrollOverflowPx
+    val exportHeight = windowHeight + with(density) { overflow.toDp() }
+    BirthdayArtwork(
+        name = name,
+        age = age,
+        photoPath = photoPath,
+        theme = theme,
+        contentPadding = contentPadding,
+        reserveShareSpace = reserveShareSpace,
+        scrollState = null,
+        layoutHeight = layoutHeight,
+        onPhotoBounds = {},
+        onLogoBottom = {},
+        modifier = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
+            .requiredSize(windowWidth, exportHeight)
+            .clearAndSetSemantics {}
+            // Record without drawing on screen; full height preserves content hidden by scrolling.
+            .drawWithContent { shareImageLayer.record { this@drawWithContent.drawContent() } },
+        onPhotoReady = onPhotoReady,
+    )
 }
 
 @Composable
@@ -211,7 +259,7 @@ private fun BirthdayBackgroundIllustration(theme: BirthdayTheme) {
 @Composable
 private fun BirthdayHeading(name: String, age: BirthdayAge) {
     val title = stringResource(R.string.birthday_heading, name.trim().uppercase())
-    val unit = androidx.compose.ui.res.pluralStringResource(
+    val ageLabel = androidx.compose.ui.res.pluralStringResource(
         if (age.inYears) R.plurals.birthday_years_old else R.plurals.birthday_months_old,
         age.number,
     )
@@ -235,7 +283,7 @@ private fun BirthdayHeading(name: String, age: BirthdayAge) {
         BirthdayNumber(age.number)
         Spacer(Modifier.height(14.dp))
         Text(
-            text = unit,
+            text = ageLabel,
             fontSize = 18.sp,
             letterSpacing = (-0.36).sp,
             fontWeight = FontWeight.Medium,
