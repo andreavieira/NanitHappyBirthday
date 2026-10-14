@@ -7,4 +7,19 @@
     <string name="baby_placeholder_description">Default baby picture</string>
     <string name="show_birthday_screen">Show birthday screen</string>
     <string name="details_ready">Details are ready.</string>
+    <string name="baby_photo_description">Selected baby picture</string>
+    <string name="choose_picture">Choose picture</string>
+    <string name="photo_choice_description">Select a picture from your gallery or take a new photo.</string>
+    <string name="gallery">Gallery</string>
+    <string name="take_photo">Take photo</string>
+    <string name="loading_details">Loading details…</string>
+    <string name="saving_details">Saving changes…</string>
+    <string name="load_failed">Could not load your details. Please retry.</string>
+    <string name="save_failed">Changes could not be saved. You can still view the birthday screen, but your changes may be lost when you close the app.</string>
+    <string name="photo_failed">Could not save that picture. Tap Choose picture and select a readable image smaller than 20 MB.</string>
+    <string name="photo_app_unavailable">Could not open the photo app. Tap Choose picture to try again.</string>
+    <string name="retry">Retry</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="remove_picture">Remove picture</string>
+    <string name="remove_photo_failed">Could not remove your picture. Tap Choose picture to try again.</string>
 </resources>

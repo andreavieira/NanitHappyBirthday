@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stages 2-5 remain pending. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is implemented on a feature branch and awaiting review; stages 3-5 remain pending. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|
@@ -16,16 +16,22 @@ Current status: stage 1 accepted after build, three validation tests, lint and e
 - Automatic center crop for selected photos; a separate theme-colored border surrounds placeholder and photo alike.
 - Consistent Android sans-serif typography; custom top-left close and centered Share the news controls.
 - One theme choice per birthday-screen entry; consecutive entries may choose the same theme.
-- Proposed input policy: reject future birthdays, validate trimmed names and preserve data on cancelled photo selection.
+- Input policy: reject future birthdays, validate trimmed names and preserve data on cancelled photo selection.
 
 ## Implementation order
 
-Introduce details UI/state first, persistence and platform photo contracts second, then birthday navigation/components. Introduce sharing last using a reusable card renderer. Keep a shared profile repository as the source of truth. Choose a serialized save strategy during stage 2 to prevent stale writes.
+Introduce details UI/state first, persistence and platform photo contracts second, then birthday navigation/components. Introduce sharing last using a reusable card renderer. Keep a shared profile repository as the source of truth. Stage 2 saves name/date on continuation and serializes photo imports through a ViewModel channel; DataStore transactions update only the relevant fields. Save failure reports a snackbar without blocking the birthday destination.
 
 ## Checks
+
+Commit readiness requires meeting the current stage's acceptance criteria, a passing debug build, all unit tests and lint, relevant instrumentation checks, successful rendering of every Compose preview in Android Studio, and emulator verification of changed flows. Build success does not establish preview correctness. Report incomplete verification explicitly and resolve failures before presenting the work as ready to commit; exceptions require explicit approval.
 
 Use pure date tests with a controlled current date for newborn, month-end, leap-day and first-birthday cases. Use injected theme selection for deterministic tests. Run debug assembly, focused tests and lint as relevant, then inspect device behavior and screenshots. Full-screen reference exports and final background crop comparisons remain outstanding; current assets and recorded measurements support initial implementation.
 
 ## Version control
 
 Create an initial foundation commit, then focused feature commits. Add annotated stage-1 through stage-5 tags only when their acceptance criteria pass. Keep machine-specific files and temporary outputs excluded. Repository publication and visibility are configured separately from implementation.
+
+## Review workflow
+
+Propose commit title/body before creating commits. After approval, push the feature branch and open a draft pull request for review in Files changed. Merge only after approval. A stage tag marks the latest approved stage checkpoint; update it only when approved stage changes are merged. Do not tag an unreviewed feature branch as complete.
