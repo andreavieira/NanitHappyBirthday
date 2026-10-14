@@ -3,7 +3,7 @@
 Source: HappyBirthdayAssignment.pdf. The original PDF is authoritative for assignment wording.
 
 - [x] Stage 1: details screen with app title, name, birthday, picture, and Show birthday screen button. Interpret the button rule as requiring both a nonblank name and a selected birthday.
-- [ ] Stage 2: edit name, choose date, select gallery photo or take a photo; persist all three across app launches.
+- [x] Stage 2: edit name, choose date, select gallery photo or take a photo; persist all three across app launches.
 - [ ] Stage 3: birthday screen matches supplied design/assets; randomly choose among three visual variants on each entry; show completed months below one year, then completed years; wrap long names to two lines; top-left close returns to details.
 - [ ] Stage 4: camera icon on birthday screen opens gallery/camera choice; chosen photo replaces default picture.
 - [ ] Stage 5: Share the news opens share menu with a rendered image excluding share, camera, and close controls.
@@ -12,4 +12,4 @@ Develop in order. Detail and completeness matter more than finishing all stages.
 
 Clarify edge cases while implementing: future birthdays, newborn zero months, leap-day and month-end birthdays, cancellation and failed camera capture, image persistence, name overflow and small-screen layout. Do not treat proposed policies as PDF requirements.
 
-Status: stage 1 accepted after build, unit tests, lint and emulator review. Stage 2 is implemented and awaiting review; stages 3-5 remain unimplemented.
+Status: stage 1 accepted after build, unit tests, lint and emulator review. Stage 2 was accepted and merged. Stage 3 navigation is implemented; theme, age artwork, and final layout are pending. Stages 4-5 remain unimplemented.

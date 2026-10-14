@@ -70,9 +70,19 @@ Fox status-bar mockup reports 360 x 24, with #25304A at 20%; navbar mockup repor
 
 Apply these layout rules alongside the reference coordinates.
 
+## iOS controls inspected for Android reuse
+
+The iOS page supplies shared controls absent from the inspected Android frames. These are iOS reference measurements, not verified Android placements:
+
+- Back asset: Anniversary_Assets → `ic_utility_24/ic_back` (node 581:191), 24 × 24. Its Union artwork is 17.75 × 15 at left 3, top 5, filled #394562. It is a left arrow, not an X. Export the complete 24 × 24 asset as SVG to preserve its internal padding; wrap it in an Android touch target of at least 48 dp.
+- Fox share group: `Group 7` (node 579:341), 179 × 42, left 98/top 569 in a 375 × 667 frame. Background `Rectangle` (579:342) is #EF7B7B with radius 21. Recreate the background and text as a native button rather than exporting the whole control.
+- Share text: `Share the news` (579:347), BentonSans 400, 16 px, line height 100%, letter spacing 0, white. Assignment permits font substitution.
+- Button arrow: `ic_share_pink_small` (579:344), 30.28 × 33.64 group bounds, left 116/top 0.19 within the 147 × 35 label/icon frame. Export the complete arrow group as SVG; its group bounds include internal spacing and should not be mistaken for the visible glyph bounds.
+- Actual back-button placement within an iOS screen was not found. Share styling was inspected in Fox; appearance in Elephant/Pelican looked consistent but their properties were not independently measured. Use Android anchoring rules rather than copying iOS screen coordinates verbatim.
+
 ## Unresolved / remaining verification
 
-- Close button and Share the news button placements were not found/verified in the inspected frame layers. Do not invent exact Figma measurements for them.
+- Close/back and share placements remain unverified in the Android frames. iOS control styling is recorded above; do not present iOS positions as Android measurements.
 - Duplicate Pelican frames exist (including photo and annotated examples). The theme measurements above came from the first Pelican frame in the tree after Elephant. Alternate-frame measurements remain unverified.
 - Imported backgrounds are 1083 x 1776 RGBA; final scaling/crop needs comparison with the reference.
 - Need to confirm hidden extra bitmap layers and the unnamed Elephant/Pelican child layer are not required visible assets.
@@ -85,3 +95,7 @@ Use Fox/, Elephant/, Pelican/ for Background.png, BabyPlaceholder.svg (or PNG wh
 ## Placeholder rendering
 
 Use the filled baby-face placeholder without the outer photo border. Draw the border separately in Compose for BOTH placeholder and selected-photo states, using the theme border color in the mapping above. Placeholder fill belongs to the default graphic only; a selected photo replaces it. Keep camera separate. 
+
+### Supplied control exports
+
+The refreshed ZIP contains `Shared/Union.svg` (18 × 15 back glyph, #394562) and `Shared/ic_share.svg` (24 × 24 white share glyph). These exported canvases differ from the parent component/group measurements above. Preserve source geometry and place each within its native Compose button; no re-export is required.

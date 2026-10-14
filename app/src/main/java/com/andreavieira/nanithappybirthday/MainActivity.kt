@@ -4,15 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
-import com.andreavieira.nanithappybirthday.feature.details.DetailsRoute
 
-/** Hosts the Compose app theme and the details screen entry point. */
+/** Hosts the Compose app theme and the two-screen app flow. */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                DetailsRoute()
+                NanitApp()
             }
         }
     }

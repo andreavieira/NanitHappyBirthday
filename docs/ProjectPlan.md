@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is implemented on a feature branch and awaiting review; stages 3-5 remain pending. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged. Stage 3 navigation is implemented; the remaining stage 3 subtasks and stages 4-5 are pending. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|
@@ -19,6 +19,8 @@ Current status: stage 1 accepted after build, three validation tests, lint and e
 - Input policy: reject future birthdays, validate trimmed names and preserve data on cancelled photo selection.
 
 ## Implementation order
+
+Stage 3 uses separate reviewable changes: navigation first, then theme/asset mapping, age calculation and number artwork, and final card layout with responsive previews. The first navigation checkpoint adds the birthday destination, close/Back handling, recreation-safe destination data, and nonblocking save-failure feedback. Its emulator navigation test passes, and Android Studio preview rendering was confirmed during review. Capture UI behavior with scripts/RecordNavigationDemo.py; recordings go to ignored outputs/ and are attached separately as review evidence.
 
 Introduce details UI/state first, persistence and platform photo contracts second, then birthday navigation/components. Introduce sharing last using a reusable card renderer. Keep a shared profile repository as the source of truth. Stage 2 saves name/date on continuation and serializes photo imports through a ViewModel channel; DataStore transactions update only the relevant fields. Save failure reports a snackbar without blocking the birthday destination.
 
