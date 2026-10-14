@@ -13,7 +13,7 @@ Select a theme once on screen entry and retain it during recomposition and photo
 Figma reports BentonSans medium, title 21 design px and age label 18 design px. Use FontFamily.SansSerif with medium headings unless a licensed font is supplied; font substitution is permitted. Use sp and support font scaling.
 
 - Back/close: use the supplied iOS left-arrow artwork (18 × 15 export inside a 24 × 24 icon slot), #394562, at top-left within system insets; 24 dp icon slot starts 16 dp from the safe content edges, inside a 48 dp touch target starting at 4 dp. The 18 × 15 export sits at x=3/y=5 in its 24 × 24 slot to preserve measured Figma padding. The app-level Scaffold supplies system-bar insets. Android placement is an implementation decision.
-- Share the news: use the inspected iOS coral #EF7B7B pill (179 × 42 reference, radius 21), white 16 px text and exported share-arrow artwork. Center below the baby image and logo over the illustration. Adapt to an Android touch target of at least 48 dp and tune placement during visual review.
+- Share the news: use the inspected iOS coral #EF7B7B pill (179 × 42 reference, radius 21), white text translated to Android 16 sp, regular weight (400), zero letter spacing, a 22 sp line height and exported share-arrow artwork. The supplied iOS text layer is 116 × 22 design px with a 16 px BentonSans font; Android font substitution remains permitted, and text width is content-driven. Center below the baby image and logo over the illustration. Adapt to an Android touch target of at least 48 dp and tune placement during visual review.
 - Camera: center its badge on the circle border at 45 degrees; separate visual size from accessible touch target.
 
 ## Baby image
@@ -28,11 +28,11 @@ Center photo and logo horizontally. Center the age section between the top syste
 
 ## Visual checks
 
-Compare all three themes, selected-photo state, long names and multi-digit ages. Preserve the recorded 8 px Pelican photo-offset difference until reference comparison resolves it. Close/share dimensions are implementation choices, not measured Figma values. Full-screen reference exports and final on-device comparison remain outstanding.
+Compare all three themes, selected-photo state, long names and multi-digit ages. Preserve the recorded 8 dp Pelican photo offset; the share-button adjustment does not move the photo, logo or heading. Close/share dimensions are implementation choices, not measured Figma values. Full-screen reference exports and final on-device comparison remain outstanding.
 
 ## Photo/logo layout implementation
 
-At the 360 × 800 baseline with 24/48 system insets, the photo top is 242 dp within safe content (266 dp in the reference frame), or 234 dp for Pelican. On taller screens it moves with the vertical center; short screens retain room for the header and scroll. Header growth for larger text may move the photo down to prevent overlap. The centered logo uses the measured 58.68 × 19.63 dp bounds and a 15 dp gap below the 200 dp photo. These responsive adaptations are implementation decisions; the baseline measurements come from FigmaMeasurements.md.
+Preserve the Stage 3 photo/header/logo layout: at the 360 × 800 baseline with 24/48 system insets, photo top is 242 dp within safe content (266 dp in the reference), or 234 dp for Pelican. On taller screens it follows the vertical center; constrained layouts retain header clearance and scroll. The photo stays 200 dp, shrinking to preserve minimum 50 dp side clearance. The centered logo is 58.68 × 19.63 dp, 15 dp below the photo. Only Share is bottom-anchored: 53 dp above the safe bottom, with at least 53 dp below the logo. That gap expands on taller screens without moving the photo/header/logo. The button retains at least a 48 dp touch target, and its measured height is included in layout.
 
 ## Annotated spacing rules
 
@@ -44,4 +44,4 @@ Enable Android edge-to-edge on all supported versions. Render the birthday illus
 
 ## Sharing implementation
 
-The share control sits 24 dp below the logo and uses a minimum 48 dp touch target. The exported PNG includes the current theme, heading, age, photo and logo without controls or system bars. On constrained screens, content scrolls and the export retains the full unscrolled card.
+The share control sits at least 53 dp below the logo and 53 dp above the safe bottom edge, with a minimum 48 dp touch target. During export preparation it retains its coral fill while disabled. The exported PNG includes the current theme, heading, age, photo and logo without controls or system bars. On constrained screens, content scrolls and the export retains the full unscrolled card.

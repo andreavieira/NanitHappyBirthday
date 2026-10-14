@@ -45,6 +45,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.platform.LocalDensity
@@ -88,15 +89,19 @@ fun BirthdayScreen(
 ) {
     val age = birthdayAge(birthday, today)
     var photoBounds by remember { mutableStateOf(Rect.Zero) }
-    var logoBottom by remember { mutableFloatStateOf(0f) }
+    var shareButtonTop by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
+    var shareButtonHeight by remember { mutableStateOf(48.dp) }
     // The route resets readiness when the path changes; do not overwrite an immediate cache success.
     LaunchedEffect(photoPath) { if (photoPath == null) onPhotoReady(true) }
     val scrollState = rememberScrollState()
-    BoxWithConstraints(modifier.fillMaxSize().clipToBounds()) {
+    BoxWithConstraints(modifier
+        .fillMaxSize()
+        .clipToBounds()) {
         val windowHeight = this.maxHeight
         val windowWidth = this.maxWidth
-        val layoutHeight = windowHeight - contentPadding.calculateTopPadding() - contentPadding.calculateBottomPadding()
+        val layoutHeight =
+            windowHeight - contentPadding.calculateTopPadding() - contentPadding.calculateBottomPadding()
         BirthdayArtwork(
             name = name,
             age = age,
@@ -104,10 +109,11 @@ fun BirthdayScreen(
             theme = theme,
             contentPadding = contentPadding,
             reserveShareSpace = onShare != null,
+            shareButtonHeight = shareButtonHeight,
             scrollState = scrollState,
             layoutHeight = layoutHeight,
             onPhotoBounds = { photoBounds = it },
-            onLogoBottom = { logoBottom = it },
+            onShareButtonTop = { shareButtonTop = it },
         )
         if (shareImageLayer != null) {
             BirthdayShareImageRenderer(
@@ -117,6 +123,7 @@ fun BirthdayScreen(
                 theme = theme,
                 contentPadding = contentPadding,
                 reserveShareSpace = onShare != null,
+                shareButtonHeight = shareButtonHeight,
                 layoutHeight = layoutHeight,
                 windowWidth = windowWidth,
                 windowHeight = windowHeight,
@@ -130,17 +137,32 @@ fun BirthdayScreen(
         // Controls draw above the recorded card, so they never enter the shared bitmap.
         if (onChoosePhoto != null && photoBounds != Rect.Zero) {
             Box(Modifier.offset { IntOffset(photoBounds.left.toInt(), photoBounds.top.toInt()) }) {
-                BirthdayCameraButton(theme, with(density) { photoBounds.width.toDp() }, photoChoiceEnabled, onChoosePhoto)
+                BirthdayCameraButton(
+                    theme,
+                    with(density) { photoBounds.width.toDp() },
+                    photoChoiceEnabled,
+                    onChoosePhoto
+                )
             }
         }
-        if (onShare != null && logoBottom > 0f) {
+        if (onShare != null && shareButtonTop > 0f) {
             BirthdayShareButton(
                 onShare, shareEnabled,
-                Modifier.align(Alignment.TopCenter).offset { IntOffset(0, logoBottom.toInt() + with(density) { 24.dp.roundToPx() }) },
+                Modifier
+                    .align(Alignment.TopCenter)
+                    .offset { IntOffset(0, shareButtonTop.toInt()) }
+                    .onSizeChanged { shareButtonHeight = with(density) { it.height.toDp() } },
             )
         }
-        Box(Modifier.fillMaxSize().padding(contentPadding)) {
-            BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(start = 4.dp, top = 4.dp))
+        Box(Modifier
+            .fillMaxSize()
+            .padding(contentPadding)) {
+            BirthdayBackButton(
+                onClose,
+                Modifier
+                    .align(Alignment.TopStart)
+                    .padding(start = 4.dp, top = 4.dp)
+            )
         }
     }
 }
@@ -153,6 +175,7 @@ private fun BirthdayShareImageRenderer(
     theme: BirthdayTheme,
     contentPadding: PaddingValues,
     reserveShareSpace: Boolean,
+    shareButtonHeight: Dp,
     layoutHeight: Dp,
     windowWidth: Dp,
     windowHeight: Dp,
@@ -170,10 +193,11 @@ private fun BirthdayShareImageRenderer(
         theme = theme,
         contentPadding = contentPadding,
         reserveShareSpace = reserveShareSpace,
+        shareButtonHeight = shareButtonHeight,
         scrollState = null,
         layoutHeight = layoutHeight,
         onPhotoBounds = {},
-        onLogoBottom = {},
+        onShareButtonTop = {},
         modifier = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
             .requiredSize(windowWidth, exportHeight)
             .clearAndSetSemantics {}
@@ -185,15 +209,40 @@ private fun BirthdayShareImageRenderer(
 
 @Composable
 private fun BirthdayArtwork(
-    name: String, age: BirthdayAge, photoPath: String?, theme: BirthdayTheme,
-    contentPadding: PaddingValues, reserveShareSpace: Boolean, scrollState: ScrollState?, layoutHeight: Dp,
-    onPhotoBounds: (Rect) -> Unit, onLogoBottom: (Float) -> Unit,
-    modifier: Modifier = Modifier, onPhotoReady: (Boolean) -> Unit = {},
+    name: String,
+    age: BirthdayAge,
+    photoPath: String?,
+    theme: BirthdayTheme,
+    contentPadding: PaddingValues,
+    reserveShareSpace: Boolean,
+    shareButtonHeight: Dp,
+    scrollState: ScrollState?,
+    layoutHeight: Dp,
+    onPhotoBounds: (Rect) -> Unit,
+    onShareButtonTop: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+    onPhotoReady: (Boolean) -> Unit = {},
 ) {
-    Box(modifier.fillMaxSize().background(theme.backgroundColor)) {
+    Box(modifier
+        .fillMaxSize()
+        .background(theme.backgroundColor)) {
         BirthdayBackgroundIllustration(theme)
-        Box(Modifier.fillMaxSize().padding(contentPadding)) {
-            BirthdayContent(name, age, photoPath, theme, reserveShareSpace, onPhotoBounds, onLogoBottom, onPhotoReady, scrollState, layoutHeight)
+        Box(Modifier
+            .fillMaxSize()
+            .padding(contentPadding)) {
+            BirthdayContent(
+                name,
+                age,
+                photoPath,
+                theme,
+                reserveShareSpace,
+                shareButtonHeight,
+                onPhotoBounds,
+                onShareButtonTop,
+                onPhotoReady,
+                scrollState,
+                layoutHeight
+            )
         }
     }
 }
@@ -202,40 +251,58 @@ private fun BirthdayArtwork(
 private fun BirthdayContent(
     name: String, age: BirthdayAge, photoPath: String?, theme: BirthdayTheme,
     reserveShareSpace: Boolean,
+    shareButtonHeight: Dp,
     onPhotoBounds: (Rect) -> Unit,
-    onLogoBottom: (Float) -> Unit,
+    onShareButtonTop: (Float) -> Unit,
     onPhotoReady: (Boolean) -> Unit,
     scrollState: ScrollState?,
     layoutHeight: Dp,
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val availableWidth = this.maxWidth
-        // At the 360 × 800 baseline, account for 24/48 system insets and preserve Pelican's 8 dp offset.
-        val photoTop = (layoutHeight / 2 - 122.dp - if (theme == BirthdayTheme.PELICAN) 8.dp else 0.dp)
-            .coerceAtLeast(224.dp)
         val photoDiameter = (availableWidth - 100.dp).coerceIn(1.dp, 200.dp)
+        val logoHeight = 19.63.dp
+        // Preserve the established photo/header placement; only Share uses the bottom anchor.
+        val photoTop =
+            (layoutHeight / 2 - 122.dp - if (theme == BirthdayTheme.PELICAN) 8.dp else 0.dp)
+                .coerceAtLeast(224.dp)
+        val logoBottom = photoTop + photoDiameter + 15.dp + logoHeight
+        val logoToShareGap =
+            (layoutHeight - 53.dp - shareButtonHeight - logoBottom).coerceAtLeast(53.dp)
+        val spaceBelowLogo =
+            if (reserveShareSpace) logoToShareGap + shareButtonHeight + 53.dp else 24.dp
+        val density = LocalDensity.current
         val contentModifier = Modifier.fillMaxWidth()
-        val scrollingModifier = if (scrollState == null) contentModifier else contentModifier.verticalScroll(scrollState)
+        val scrollingModifier =
+            if (scrollState == null) contentModifier else contentModifier.verticalScroll(scrollState)
         Column(
             scrollingModifier.padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                Modifier.fillMaxWidth().heightIn(min = photoTop).padding(top = 20.dp, bottom = 20.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = photoTop)
+                    .padding(top = 20.dp, bottom = 20.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 BirthdayHeading(name, age)
             }
-            Box(Modifier.size(photoDiameter).onGloballyPositioned { onPhotoBounds(it.boundsInRoot()) }) {
+            Box(
+                Modifier
+                    .size(photoDiameter)
+                    .onGloballyPositioned { onPhotoBounds(it.boundsInRoot()) }) {
                 BirthdayPhoto(photoPath, theme, photoDiameter, onPhotoReady)
             }
             Spacer(Modifier.height(15.dp))
             Image(
                 painter = painterResource(R.drawable.nanit_logo),
                 contentDescription = stringResource(R.string.nanit_logo_description),
-                modifier = Modifier.size(58.68.dp, 19.63.dp).onGloballyPositioned { onLogoBottom(it.boundsInRoot().bottom) },
+                modifier = Modifier
+                    .size(58.68.dp, logoHeight)
+                    .onGloballyPositioned { onShareButtonTop(it.boundsInRoot().bottom + with(density) { logoToShareGap.toPx() }) },
             )
-            Spacer(Modifier.height(if (reserveShareSpace) 96.dp else 24.dp))
+            Spacer(Modifier.height(spaceBelowLogo))
         }
     }
 }
@@ -249,7 +316,8 @@ private fun BirthdayBackgroundIllustration(theme: BirthdayTheme) {
             painter = painterResource(theme.backgroundResource),
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            modifier = Modifier.align(Alignment.BottomCenter)
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
                 .requiredWidth(illustrationWidth)
                 .aspectRatio(1083f / 1776f),
         )
@@ -308,25 +376,48 @@ private fun BirthdayNumber(number: Int) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(22.dp),
     ) {
-        Image(painterResource(R.drawable.birthday_swirl_left), null, Modifier.size(50.2.dp, 43.53.dp))
-        Row(Modifier.height(88.dp).clearAndSetSemantics { contentDescription = number.toString() }, verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painterResource(R.drawable.birthday_swirl_left),
+            null,
+            Modifier.size(50.2.dp, 43.53.dp)
+        )
+        Row(
+            Modifier
+                .height(88.dp)
+                .clearAndSetSemantics { contentDescription = number.toString() },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             // Use the supplied compound artwork through 12; compose digits for larger ages.
-            val artwork = if (number <= 12) listOf(resources[number]) else number.toString().map { resources[it.digitToInt()] }
+            val artwork = if (number <= 12) listOf(resources[number]) else number.toString()
+                .map { resources[it.digitToInt()] }
             artwork.forEach { resource ->
                 val painter = painterResource(resource)
                 Image(
                     painter, null,
-                    Modifier.height(88.dp).width(88.dp * painter.intrinsicSize.width / painter.intrinsicSize.height),
+                    Modifier
+                        .height(88.dp)
+                        .width(88.dp * painter.intrinsicSize.width / painter.intrinsicSize.height),
                 )
             }
         }
-        Image(painterResource(R.drawable.birthday_swirl_right), null, Modifier.size(50.2.dp, 43.53.dp))
+        Image(
+            painterResource(R.drawable.birthday_swirl_right),
+            null,
+            Modifier.size(50.2.dp, 43.53.dp)
+        )
     }
 }
 
 @Composable
-private fun BirthdayPhoto(photoPath: String?, theme: BirthdayTheme, diameter: Dp, onReady: (Boolean) -> Unit) {
-    val modifier = Modifier.size(diameter).clip(CircleShape)
+private fun BirthdayPhoto(
+    photoPath: String?,
+    theme: BirthdayTheme,
+    diameter: Dp,
+    onReady: (Boolean) -> Unit
+) {
+    val modifier = Modifier
+        .size(diameter)
+        .clip(CircleShape)
         .background(theme.placeholderColor)
         .border(7.dp, theme.borderColor.copy(alpha = 0.78f), CircleShape)
     if (photoPath == null) {
@@ -363,7 +454,9 @@ private fun BirthdayCameraButton(
     IconButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.offset(center + diagonal - 24.dp, center - diagonal - 24.dp).size(48.dp),
+        modifier = Modifier
+            .offset(center + diagonal - 24.dp, center - diagonal - 24.dp)
+            .size(48.dp),
     ) {
         Image(
             painterResource(theme.cameraResource),
@@ -374,15 +467,32 @@ private fun BirthdayCameraButton(
 }
 
 @Composable
-private fun BirthdayShareButton(onClick: () -> Unit, enabled: Boolean, modifier: Modifier = Modifier) {
+private fun BirthdayShareButton(
+    onClick: () -> Unit,
+    enabled: Boolean,
+    modifier: Modifier = Modifier
+) {
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.heightIn(min = 48.dp).widthIn(min = 179.dp),
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .widthIn(min = 179.dp),
         shape = RoundedCornerShape(21.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF7B7B), contentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFFEF7B7B),
+            contentColor = Color.White,
+            disabledContainerColor = Color(0xFFEF7B7B),
+            disabledContentColor = Color.White.copy(alpha = 0.7f),
+        ),
     ) {
-        Text(stringResource(R.string.share_the_news), fontSize = 16.sp)
+        Text(
+            stringResource(R.string.share_the_news),
+            fontSize = 16.sp,
+            lineHeight = 22.sp,
+            fontWeight = FontWeight.Normal,
+            letterSpacing = 0.sp,
+        )
         Spacer(Modifier.width(12.dp))
         Image(painterResource(R.drawable.birthday_share), null, Modifier.size(24.dp))
     }
@@ -393,49 +503,133 @@ private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifie
     val label = stringResource(R.string.close_birthday)
     IconButton(
         onClick = onClick,
-        modifier = modifier.size(48.dp).semantics { contentDescription = label },
+        modifier = modifier
+            .size(48.dp)
+            .semantics { contentDescription = label },
     ) {
         // The export is the inner Union; restore its measured padding in the 24 dp Figma slot.
         Box(Modifier.size(24.dp)) {
             Image(
                 painter = painterResource(R.drawable.birthday_back),
                 contentDescription = null,
-                modifier = Modifier.offset(3.dp, 5.dp).size(18.dp, 15.dp),
+                modifier = Modifier
+                    .offset(3.dp, 5.dp)
+                    .size(18.dp, 15.dp),
             )
         }
     }
 }
 
-@Preview(name = "Fox", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
+@Preview(
+    name = "Fox",
+    group = "Birthday themes",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800
+)
 @Composable
 private fun FoxBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, onShare = {}, theme = BirthdayTheme.FOX, today = LocalDate.of(2025, 2, 15)) }
-}
-
-@Preview(name = "Elephant", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
-@Composable
-private fun ElephantBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, onShare = {}, theme = BirthdayTheme.ELEPHANT, today = LocalDate.of(2025, 11, 15)) }
-}
-
-@Preview(name = "Pelican", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
-@Composable
-private fun PelicanBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, onShare = {}, theme = BirthdayTheme.PELICAN, today = LocalDate.of(2026, 1, 15)) }
-}
-
-@Preview(name = "Long name", group = "Birthday header", showBackground = true, widthDp = 360, heightDp = 800)
-@Composable
-private fun LongNameBirthdayPreview() {
     MaterialTheme {
-        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, onShare = {}, today = LocalDate.of(2025, 12, 15))
+        BirthdayScreen(
+            "Alex",
+            LocalDate.of(2025, 1, 15),
+            null,
+            {},
+            onChoosePhoto = {},
+            onShare = {},
+            theme = BirthdayTheme.FOX,
+            today = LocalDate.of(2025, 2, 15)
+        )
     }
 }
 
-@Preview(name = "Small screen, large text", group = "Birthday header", showBackground = true, widthDp = 320, heightDp = 568, fontScale = 1.5f)
+@Preview(
+    name = "Elephant",
+    group = "Birthday themes",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800
+)
+@Composable
+private fun ElephantBirthdayPreview() {
+    MaterialTheme {
+        BirthdayScreen(
+            "Alex",
+            LocalDate.of(2025, 1, 15),
+            null,
+            {},
+            onChoosePhoto = {},
+            onShare = {},
+            theme = BirthdayTheme.ELEPHANT,
+            today = LocalDate.of(2025, 11, 15)
+        )
+    }
+}
+
+@Preview(
+    name = "Pelican",
+    group = "Birthday themes",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800
+)
+@Composable
+private fun PelicanBirthdayPreview() {
+    MaterialTheme {
+        BirthdayScreen(
+            "Alex",
+            LocalDate.of(2025, 1, 15),
+            null,
+            {},
+            onChoosePhoto = {},
+            onShare = {},
+            theme = BirthdayTheme.PELICAN,
+            today = LocalDate.of(2026, 1, 15)
+        )
+    }
+}
+
+@Preview(
+    name = "Long name",
+    group = "Birthday header",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800
+)
+@Composable
+private fun LongNameBirthdayPreview() {
+    MaterialTheme {
+        BirthdayScreen(
+            "Cristiano Ronaldo",
+            LocalDate.of(2025, 1, 15),
+            null,
+            {},
+            onChoosePhoto = {},
+            onShare = {},
+            today = LocalDate.of(2025, 12, 15)
+        )
+    }
+}
+
+@Preview(
+    name = "Small screen, large text",
+    group = "Birthday header",
+    showBackground = true,
+    widthDp = 320,
+    heightDp = 568,
+    fontScale = 1.5f
+)
 @Composable
 private fun SmallScreenBirthdayPreview() {
     MaterialTheme {
-        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, onShare = {}, today = LocalDate.of(2025, 12, 15))
+        BirthdayScreen(
+            "Cristiano Ronaldo",
+            LocalDate.of(2025, 1, 15),
+            null,
+            {},
+            onChoosePhoto = {},
+            onShare = {},
+            today = LocalDate.of(2025, 12, 15)
+        )
     }
 }

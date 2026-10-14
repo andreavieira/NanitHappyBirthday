@@ -92,9 +92,17 @@ class BirthdaySharingTest {
                     device.waitForIdle()
                     val backBounds = device.findObject(By.desc("Close birthday screen")).visibleBounds
                     val cameraBounds = device.findObject(By.desc("Choose picture")).visibleBounds
-                    val shareBounds = share.visibleBounds
+                    val shareBounds = requireNotNull(share.parent).visibleBounds
                     val photoBounds = photoObject.visibleBounds
+                    val logoBounds = requireNotNull(device.findObject(By.desc("Nanit"))).visibleBounds
                     val live = instrumentation.uiAutomation.takeScreenshot()
+                    val density = app.resources.displayMetrics.density
+                    assertEquals("Share is anchored above the safe bottom", 53 * density, (live.height - bottom - shareBounds.bottom).toFloat(), 2f)
+                    assertTrue("Share remains at least 53 dp below the logo", shareBounds.top - logoBounds.bottom >= 53 * density - 2)
+                    assertEquals("Photo-to-logo spacing", 15 * density, (logoBounds.top - photoBounds.bottom).toFloat(), 2f)
+                    val safeHeight = (live.height - top - bottom) / density
+                    val expectedPhotoTop = (safeHeight / 2 - 122 - if (theme == BirthdayTheme.PELICAN) 8 else 0).coerceAtLeast(224f)
+                    assertEquals("Photo keeps its Stage 3 placement", expectedPhotoTop * density, (photoBounds.top - top).toFloat(), 2f)
                     assertTrue(device.takeScreenshot(File(app.getExternalFilesDir(null), "BirthdayShare${theme.name}.png")))
                     share.click()
                     assertTrue(device.wait(Until.hasObject(By.pkg("com.android.intentresolver")), 10000))
