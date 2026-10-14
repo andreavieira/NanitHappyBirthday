@@ -3,6 +3,9 @@ package com.andreavieira.nanithappybirthday
 import android.os.SystemClock
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.ui.graphics.toArgb
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -33,7 +36,9 @@ class BirthdayThemeRenderingTest {
                 scenario.onActivity { activity ->
                     activity.setContent {
                         MaterialTheme {
-                            BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = theme)
+                            Scaffold(containerColor = theme.backgroundColor, contentWindowInsets = WindowInsets.safeDrawing) { padding ->
+                                BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = theme, contentPadding = padding)
+                            }
                         }
                     }
                 }

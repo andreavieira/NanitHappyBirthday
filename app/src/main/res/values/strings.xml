@@ -23,4 +23,14 @@
     <string name="remove_picture">Remove picture</string>
     <string name="remove_photo_failed">Could not remove your picture. Tap Choose picture to try again.</string>
     <string name="close_birthday">Close birthday screen</string>
+    <string name="birthday_heading">TODAY %1$s IS</string>
+    <plurals name="birthday_months_old">
+        <item quantity="one">MONTH OLD!</item>
+        <item quantity="other">MONTHS OLD!</item>
+    </plurals>
+    <plurals name="birthday_years_old">
+        <item quantity="one">YEAR OLD!</item>
+        <item quantity="other">YEARS OLD!</item>
+    </plurals>
+    <string name="nanit_logo_description">Nanit</string>
 </resources>

@@ -14,6 +14,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,6 +54,7 @@ fun NanitApp() {
 
     BackHandler(enabled = showingBirthday) { showingBirthday = false }
     Scaffold(
+        contentWindowInsets = WindowInsets.safeDrawing,
         containerColor = if (showingBirthday) selectedTheme.backgroundColor else MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(snackbarHost) },
     ) { padding ->
@@ -62,7 +65,7 @@ fun NanitApp() {
                 photoPath = photoPath,
                 theme = selectedTheme,
                 onClose = { showingBirthday = false },
-                modifier = Modifier.padding(padding),
+                contentPadding = padding,
             )
         } else {
             DetailsRoute(

@@ -5,6 +5,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import kotlinx.coroutines.flow.first
@@ -30,14 +31,14 @@ class BirthdayNavigationTest {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
                 assertTrue(device.wait(Until.hasObject(By.text("Show birthday screen").enabled(true)), 10000))
                 if (recordDemo) SystemClock.sleep(1000)
-                device.findObject(By.text("Show birthday screen")).click()
+                clickShowBirthday(device)
                 assertTrue(device.wait(Until.hasObject(By.desc("Close birthday screen")), 5000))
-                assertTrue(device.hasObject(By.text("Navigation test")))
+                assertTrue(device.hasObject(By.text("TODAY NAVIGATION TEST IS")))
                 val backBounds = device.findObject(By.desc("Close birthday screen")).visibleBounds
                 assertTrue(backBounds.width() >= 48 * app.resources.displayMetrics.density - 1)
                 assertTrue(backBounds.height() >= 48 * app.resources.displayMetrics.density - 1)
-                assertTrue(backBounds.left >= 16 * app.resources.displayMetrics.density - 1)
-                assertTrue(backBounds.top >= 16 * app.resources.displayMetrics.density - 1)
+                assertTrue(kotlin.math.abs(backBounds.left - 4 * app.resources.displayMetrics.density) <= 1)
+                assertTrue(backBounds.top >= 4 * app.resources.displayMetrics.density - 1)
                 if (recordDemo) {
                     SystemClock.sleep(1200)
                     assertTrue(device.takeScreenshot(File(app.getExternalFilesDir(null), "BirthdayNavigation.png")))
@@ -56,7 +57,7 @@ class BirthdayNavigationTest {
                 assertTrue(device.wait(Until.hasObject(By.clazz("android.widget.EditText")), 5000))
                 assertEquals("Navigation test", device.findObject(By.clazz("android.widget.EditText")).text)
                 if (recordDemo) SystemClock.sleep(1000)
-                device.findObject(By.text("Show birthday screen")).click()
+                clickShowBirthday(device)
                 assertTrue(device.wait(Until.hasObject(By.desc("Close birthday screen")), 5000))
                 if (recordDemo) SystemClock.sleep(1000)
                 device.pressBack()
@@ -67,4 +68,20 @@ class BirthdayNavigationTest {
             runBlocking { app.profileRepository.saveDetails(previous.name, previous.birthday) }
         }
     }
+
+    private fun clickShowBirthday(device: UiDevice) {
+        // Profile loading can replace the accessibility node after it first becomes enabled.
+        repeat(3) { attempt ->
+            device.waitForIdle()
+            val button = device.wait(Until.findObject(By.text("Show birthday screen").enabled(true)), 5000)
+            requireNotNull(button)
+            try {
+                button.click()
+                return
+            } catch (stale: StaleObjectException) {
+                if (attempt == 2) throw stale
+            }
+        }
+    }
+
 }
