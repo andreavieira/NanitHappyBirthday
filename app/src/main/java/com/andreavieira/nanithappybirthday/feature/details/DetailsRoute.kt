@@ -14,9 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.ui.theme.DetailsTheme
-import com.andreavieira.nanithappybirthday.ui.photo.PhotoChoiceDialog
-import com.andreavieira.nanithappybirthday.ui.photo.rememberCameraPhotoCapture
-import com.andreavieira.nanithappybirthday.ui.photo.rememberGalleryPhotoPicker
+import com.andreavieira.nanithappybirthday.ui.photo.PhotoSelectionFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -40,16 +38,7 @@ private fun DetailsRouteContent(
     val uiState by detailsViewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
 
-    // Photo selection: dialog visibility and separate gallery/camera actions.
     var showPhotoPicker by rememberSaveable { mutableStateOf(false) }
-    val chooseGalleryPhoto = rememberGalleryPhotoPicker(
-        onPhotoSelected = detailsViewModel::selectPhoto,
-        onLaunchFailed = detailsViewModel::reportCameraError,
-    )
-    val takeCameraPhoto = rememberCameraPhotoCapture(
-        onPhotoSelected = { source, onFinished -> detailsViewModel.selectPhoto(source, onFinished) },
-        onLaunchFailed = detailsViewModel::reportCameraError,
-    )
 
     Box(modifier) {
         DetailsScreen(
@@ -76,19 +65,12 @@ private fun DetailsRouteContent(
             },
         )
     }
-    if (showPhotoPicker) {
-        PhotoChoiceDialog(
-            onDismiss = { showPhotoPicker = false },
-            onChooseGallery = {
-                showPhotoPicker = false
-                chooseGalleryPhoto()
-            },
-            onTakePhoto = {
-                showPhotoPicker = false
-                takeCameraPhoto()
-            },
-        )
-    }
+    PhotoSelectionFlow(
+        isVisible = showPhotoPicker,
+        onDismiss = { showPhotoPicker = false },
+        onPhotoSelected = { source, onFinished -> detailsViewModel.selectPhoto(source, onFinished) },
+        onLaunchFailed = detailsViewModel::reportCameraError,
+    )
 }
 
 private fun showBirthdayPicker(
