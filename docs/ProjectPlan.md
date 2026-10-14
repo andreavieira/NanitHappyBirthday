@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: stage 1 UI and validation implemented; build, three validation tests and lint pass. Emulator launch/initial rendering checked. Interactive acceptance review remains pending before the stage-1 tag. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stages 2-5 remain pending. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|

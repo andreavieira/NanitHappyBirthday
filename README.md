@@ -14,7 +14,7 @@ Open this directory in Android Studio, select JDK 17 as the Gradle JDK, sync, an
 ./gradlew assembleDebug testDebugUnitTest lintDebug
 ```
 
-Debug assembly, three form-validation unit tests and lint pass. The details screen was installed and launched on an emulator without a crash. Full interactive/device review remains pending.
+Debug assembly, three form-validation unit tests and lint pass. The details screen was installed and launched on an emulator without a crash. Stage 1 passed emulator review and is marked by the stage-1 tag.
 
 ## Implementation
 
