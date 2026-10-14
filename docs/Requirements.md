@@ -2,7 +2,7 @@
 
 Source: HappyBirthdayAssignment.pdf. The original PDF is authoritative for assignment wording.
 
-- [x] Stage 1: details screen with app title, name, birthday, picture, and Show birthday screen button. Interpret the button rule as requiring both a nonblank name and a selected birthday; 
+- [x] Stage 1: details screen with app title, name, birthday, picture, and Show birthday screen button. Interpret the button rule as requiring both a nonblank name and a selected birthday.
 - [ ] Stage 2: edit name, choose date, select gallery photo or take a photo; persist all three across app launches.
 - [ ] Stage 3: birthday screen matches supplied design/assets; randomly choose among three visual variants on each entry; show completed months below one year, then completed years; wrap long names to two lines; top-left close returns to details.
 - [ ] Stage 4: camera icon on birthday screen opens gallery/camera choice; chosen photo replaces default picture.

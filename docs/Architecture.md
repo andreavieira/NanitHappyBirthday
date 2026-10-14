@@ -11,3 +11,9 @@ Reference: https://developer.android.com/topic/architecture/recommendations
 ## Shared baby image component
 
 Use one reusable circular baby image component for both states: a filled, borderless theme placeholder when no photo exists, or the selected photo when available. Clip the displayed content to a circle and draw the theme-colored outer border separately in Compose in both states. Keep border geometry independent of the image source. The camera action is a separate overlay. See DesignAssets.md for asset selection and reference colors; avoid baking the photo border into placeholder exports.
+
+## Details screen boundary
+
+MainActivity hosts the app theme and DetailsRoute. DetailsRoute collects ViewModel state, wires callbacks and hosts UI/platform interactions. DetailsScreen accepts immutable state and callbacks without depending on the ViewModel or an Activity. The platform date picker is created by a private UI helper; its Context stays outside the ViewModel.
+
+The date picker's maximum date is a UI constraint. Stage 2 will also validate profile writes at the repository boundary, using a controlled current date for tests, so restored values or other callers cannot bypass the rule.
