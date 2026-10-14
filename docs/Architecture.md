@@ -33,3 +33,7 @@ Name/date save failure returns a result for snackbar feedback and does not block
 ## Birthday theme selection
 
 BirthdayTheme maps each variant to its measured colors and supplied illustration, placeholder, and camera resources. NanitApp chooses a theme only when handling entry to the birthday destination and stores its enum name with rememberSaveable alongside the displayed profile snapshot. Recomposition and activity recreation preserve that selection; closing and entering again performs another independent choice, which may repeat the previous variant. BirthdayScreen receives its theme explicitly and separates illustration, heading, photo, and back-control rendering. The app container uses the same theme background around system insets.
+
+## Code documentation
+
+Keep concise purpose/responsibility KDoc on classes, interfaces, enums and named objects. Function comments, including composable KDoc, should explain non-obvious behavior, constraints or intent; omit descriptions that repeat clear names or implementation.

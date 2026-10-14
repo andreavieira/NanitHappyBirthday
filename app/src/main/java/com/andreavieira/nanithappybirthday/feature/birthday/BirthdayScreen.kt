@@ -35,7 +35,6 @@ import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
 import java.time.LocalDate
 
-/** Renders the selected birthday variant; final heading and age presentation follow separately. */
 @Composable
 fun BirthdayScreen(
     name: String,
@@ -59,7 +58,6 @@ fun BirthdayScreen(
     }
 }
 
-/** Pins the original transparent illustration to the bottom, preserving its aspect ratio. */
 @Composable
 private fun BirthdayIllustration(theme: BirthdayTheme) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -76,7 +74,6 @@ private fun BirthdayIllustration(theme: BirthdayTheme) {
     }
 }
 
-/** Groups the provisional name/date heading; age artwork will replace the raw date later. */
 @Composable
 private fun BirthdayHeading(name: String, birthday: LocalDate) {
     Column(
@@ -94,7 +91,6 @@ private fun BirthdayHeading(name: String, birthday: LocalDate) {
     }
 }
 
-/** Displays the placeholder or selected image using the same circular photo bounds. */
 @Composable
 private fun BirthdayPhoto(photoPath: String?, theme: BirthdayTheme) {
     val modifier = Modifier.size(200.dp).clip(CircleShape)
@@ -118,7 +114,6 @@ private fun BirthdayPhoto(photoPath: String?, theme: BirthdayTheme) {
     }
 }
 
-/** Preserves the supplied icon geometry while providing an accessible Android touch target. */
 @Composable
 private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     val label = stringResource(R.string.close_birthday)
