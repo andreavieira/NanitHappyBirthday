@@ -33,4 +33,6 @@
         <item quantity="other">YEARS OLD!</item>
     </plurals>
     <string name="nanit_logo_description">Nanit</string>
+    <string name="share_the_news">Share the news</string>
+    <string name="share_failed">Could not prepare the image for sharing. Please try again.</string>
 </resources>

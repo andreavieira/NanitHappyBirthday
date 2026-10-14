@@ -4,7 +4,7 @@ Behavior follows Requirements.md. Measured values are in FigmaMeasurements.md; d
 
 ## Components
 
-BirthdayScreen contains a solid theme background, illustration, AgeHeading, BabyImage, Nanit logo and independent close/camera/share controls. A reusable BirthdayCard renders content without interactive controls for sharing. Name and age text remain dynamic.
+BirthdayScreen contains a solid theme background, illustration, AgeHeading, BabyImage, Nanit logo and independent close/camera/share controls. BirthdayArtwork renders content without interactive controls for sharing. Name and age text remain dynamic.
 
 Select a theme once on screen entry and retain it during recomposition and photo updates. Theme definitions map colors and resources from DesignAssets.md.
 
@@ -36,8 +36,12 @@ At the 360 × 800 baseline with 24/48 system insets, the photo top is 242 dp wit
 
 ## Annotated spacing rules
 
-The supplied annotated Pelican reference takes precedence over inferred spacing: center the complete age section vertically between the status inset and photo, with at least 20 dp above and 15 dp below. Use 13 dp between title and number, 14 dp between number and age label, and 22 dp from number to each swirl. Preserve the photo’s minimum 50 dp side clearance, horizontal centering of photo/logo, 15 dp photo-to-logo gap, and bottom/side anchored aspect-preserving illustration. These are minimum clearances rather than a fixed age-label-to-photo gap. Camera placement at 45 degrees is deferred to Stage 4.
+The supplied annotated Pelican reference takes precedence over inferred spacing: center the complete age section vertically between the status inset and photo, with at least 20 dp above and 15 dp below. Use 13 dp between title and number, 14 dp between number and age label, and 22 dp from number to each swirl. Preserve the photo’s minimum 50 dp side clearance, horizontal centering of photo/logo, 15 dp photo-to-logo gap, and bottom/side anchored aspect-preserving illustration. These are minimum clearances rather than a fixed age-label-to-photo gap. The camera badge is centered at 45 degrees on the photo border centerline.
 
 ## System insets
 
 Enable Android edge-to-edge on all supported versions. Render the birthday illustration across the entire window; apply Scaffold safeDrawing padding only to birthday content and controls. The safe region accounts for system bars and display cutouts. Keep platform navigation-bar protection for three-button navigation. The back control uses a 48 dp target at 4 dp from the safe top/start edges, centering the original 24 dp asset slot at 16 dp; the exported glyph retains its internal 3/5 dp offset.
+
+## Sharing implementation
+
+The share control sits 24 dp below the logo and uses a minimum 48 dp touch target. The exported PNG includes the current theme, heading, age, photo and logo without controls or system bars. On constrained screens, content scrolls and the export retains the full unscrolled card.
