@@ -16,7 +16,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +23,7 @@ import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.feature.details.DetailsError
 import com.andreavieira.nanithappybirthday.feature.details.DetailsViewModel
 import com.andreavieira.nanithappybirthday.ui.photo.PhotoSelectionFlow
+import com.andreavieira.nanithappybirthday.ui.theme.NanitColors
 import java.time.LocalDate
 import kotlinx.coroutines.launch
 
@@ -92,7 +92,7 @@ fun BirthdayRoute(
     MaterialTheme(
         colorScheme =
             MaterialTheme.colorScheme.copy(
-                primary = Color(0xFF394562),
+                primary = NanitColors.BirthdayForeground,
                 surfaceContainerHigh = theme.backgroundColor,
             )
     ) {

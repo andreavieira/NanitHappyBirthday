@@ -37,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -51,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.ui.theme.DetailsTheme
+import com.andreavieira.nanithappybirthday.ui.theme.NanitColors
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -139,7 +139,7 @@ private fun BabyPhotoSection(
     ) {
         Text(stringResource(R.string.picture), style = MaterialTheme.typography.labelLarge)
         val photoModifier =
-            Modifier.size(144.dp).clip(CircleShape).border(4.dp, Color(0xFF6FC5AF), CircleShape)
+            Modifier.size(144.dp).clip(CircleShape).border(4.dp, NanitColors.FoxBorder, CircleShape)
         val removeLabel = stringResource(R.string.remove_picture)
         Box(Modifier.size(160.dp), contentAlignment = Alignment.Center) {
             if (uiState.photoPath == null) {
