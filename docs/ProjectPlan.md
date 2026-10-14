@@ -43,7 +43,7 @@ Propose commit title/body before creating commits. After approval, push the feat
 - `stage-1`: final accepted details-form checkpoint (`3361865`).
 - `stage-2`: final accepted persistence checkpoint, including all stage 2 refinements (`3a4ed08`).
 - `stage-3`: final accepted birthday presentation checkpoint (`3f5e8ac`), including themes, age artwork, annotated layout and edge-to-edge rendering.
-- `stage-4`: final accepted birthday photo-update checkpoint (`74acc6b`).
+- `stage-4`: final accepted birthday photo-update checkpoint, including shared photo-selection coordination (`a1a1e72`).
 - `stage-5`: created only after sharing acceptance, verification and merge.
 
 Before final submission, verify each annotated stage tag exists on origin and resolves to the final accepted commit for that stage. Intermediate PR merges do not mark an assignment stage complete.
