@@ -3,11 +3,21 @@ package com.andreavieira.nanithappybirthday.feature.birthday
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.requiredWidth
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -28,6 +38,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,18 +57,46 @@ fun BirthdayScreen(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
     theme: BirthdayTheme = BirthdayTheme.FOX,
+    today: LocalDate = LocalDate.now(),
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     Box(modifier.fillMaxSize().background(theme.backgroundColor).clipToBounds()) {
         BirthdayIllustration(theme)
-        Column(
-            modifier = Modifier.align(Alignment.Center).padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-        ) {
-            BirthdayHeading(name, birthday)
-            BirthdayPhoto(photoPath, theme)
+        Box(Modifier.fillMaxSize().padding(contentPadding)) {
+            BirthdayContent(name, birthdayAge(birthday, today), photoPath, theme)
+            BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(start = 4.dp, top = 4.dp))
         }
-        BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(16.dp))
+    }
+}
+
+@Composable
+private fun BirthdayContent(name: String, age: BirthdayAge, photoPath: String?, theme: BirthdayTheme) {
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val availableHeight = this.maxHeight
+        val availableWidth = this.maxWidth
+        // At the 360 × 800 baseline, account for 24/48 system insets and preserve Pelican's 8 dp offset.
+        val photoTop = (availableHeight / 2 - 122.dp - if (theme == BirthdayTheme.PELICAN) 8.dp else 0.dp)
+            .coerceAtLeast(224.dp)
+        val photoDiameter = (availableWidth - 100.dp).coerceIn(1.dp, 200.dp)
+        Column(
+            Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Box(
+                Modifier.fillMaxWidth().heightIn(min = photoTop).padding(top = 20.dp, bottom = 20.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                BirthdayHeading(name, age)
+            }
+            BirthdayPhoto(photoPath, theme, photoDiameter)
+            Spacer(Modifier.height(15.dp))
+            Image(
+                painter = painterResource(R.drawable.nanit_logo),
+                contentDescription = stringResource(R.string.nanit_logo_description),
+                modifier = Modifier.size(58.68.dp, 19.63.dp),
+            )
+            Spacer(Modifier.height(24.dp))
+        }
     }
 }
 
@@ -75,25 +117,76 @@ private fun BirthdayIllustration(theme: BirthdayTheme) {
 }
 
 @Composable
-private fun BirthdayHeading(name: String, birthday: LocalDate) {
+private fun BirthdayHeading(name: String, age: BirthdayAge) {
+    val title = stringResource(R.string.birthday_heading, name.trim().uppercase())
+    val unit = androidx.compose.ui.res.pluralStringResource(
+        if (age.inYears) R.plurals.birthday_years_old else R.plurals.birthday_months_old,
+        age.number,
+    )
     Column(
+        modifier = Modifier.widthIn(max = 312.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
-            text = name,
-            style = MaterialTheme.typography.headlineMedium,
+            text = title,
+            modifier = Modifier.widthIn(max = 252.dp),
+            fontSize = 21.sp,
+            lineHeight = 23.sp,
+            letterSpacing = (-0.42).sp,
+            fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             color = Color(0xFF394562),
         )
-        Text(birthday.toString(), color = Color(0xFF394562))
+        Spacer(Modifier.height(13.dp))
+        BirthdayNumber(age.number)
+        Spacer(Modifier.height(14.dp))
+        Text(
+            text = unit,
+            fontSize = 18.sp,
+            letterSpacing = (-0.36).sp,
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            color = Color(0xFF394562),
+        )
     }
 }
 
 @Composable
-private fun BirthdayPhoto(photoPath: String?, theme: BirthdayTheme) {
-    val modifier = Modifier.size(200.dp).clip(CircleShape)
+private fun BirthdayNumber(number: Int) {
+    val resources = listOf(
+        R.drawable.birthday_number_0, R.drawable.birthday_number_1,
+        R.drawable.birthday_number_2, R.drawable.birthday_number_3,
+        R.drawable.birthday_number_4, R.drawable.birthday_number_5,
+        R.drawable.birthday_number_6, R.drawable.birthday_number_7,
+        R.drawable.birthday_number_8, R.drawable.birthday_number_9,
+        R.drawable.birthday_number_10, R.drawable.birthday_number_11,
+        R.drawable.birthday_number_12,
+    )
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(22.dp),
+    ) {
+        Image(painterResource(R.drawable.birthday_swirl_left), null, Modifier.size(50.2.dp, 43.53.dp))
+        Row(Modifier.height(88.dp).clearAndSetSemantics { contentDescription = number.toString() }, verticalAlignment = Alignment.CenterVertically) {
+            // Use the supplied compound artwork through 12; compose digits for larger ages.
+            val artwork = if (number <= 12) listOf(resources[number]) else number.toString().map { resources[it.digitToInt()] }
+            artwork.forEach { resource ->
+                val painter = painterResource(resource)
+                Image(
+                    painter, null,
+                    Modifier.height(88.dp).width(88.dp * painter.intrinsicSize.width / painter.intrinsicSize.height),
+                )
+            }
+        }
+        Image(painterResource(R.drawable.birthday_swirl_right), null, Modifier.size(50.2.dp, 43.53.dp))
+    }
+}
+
+@Composable
+private fun BirthdayPhoto(photoPath: String?, theme: BirthdayTheme, diameter: androidx.compose.ui.unit.Dp) {
+    val modifier = Modifier.size(diameter).clip(CircleShape)
         .background(theme.placeholderColor)
         .border(7.dp, theme.borderColor.copy(alpha = 0.78f), CircleShape)
     if (photoPath == null) {
@@ -135,17 +228,33 @@ private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifie
 @Preview(name = "Fox", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun FoxBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.FOX) }
+    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.FOX, today = LocalDate.of(2025, 2, 15)) }
 }
 
 @Preview(name = "Elephant", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun ElephantBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.ELEPHANT) }
+    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.ELEPHANT, today = LocalDate.of(2025, 11, 15)) }
 }
 
 @Preview(name = "Pelican", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun PelicanBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.PELICAN) }
+    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.PELICAN, today = LocalDate.of(2026, 1, 15)) }
+}
+
+@Preview(name = "Long name", group = "Birthday header", showBackground = true, widthDp = 360, heightDp = 800)
+@Composable
+private fun LongNameBirthdayPreview() {
+    MaterialTheme {
+        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, today = LocalDate.of(2025, 12, 15))
+    }
+}
+
+@Preview(name = "Small screen, large text", group = "Birthday header", showBackground = true, widthDp = 320, heightDp = 568, fontScale = 1.5f)
+@Composable
+private fun SmallScreenBirthdayPreview() {
+    MaterialTheme {
+        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, today = LocalDate.of(2025, 12, 15))
+    }
 }

@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged; stage-2 points to its final merge commit. Stage 3 navigation is implemented; the remaining stage 3 subtasks and stages 4-5 are pending. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged; stage-2 points to its final merge commit. Stage 3 implementation is ready for final review; stages 4-5 remain pending. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|
@@ -49,4 +49,12 @@ Before final submission, verify each annotated stage tag exists on origin and re
 
 ## Current theme checkpoint
 
-The three theme/asset mappings and random selection on each birthday entry are implemented locally. Background illustrations retain their aspect ratio, bottom anchor, and recorded side overflow. Photo and placeholder share the theme border. Per-theme previews and emulator captures are included. Age artwork, final heading/photo/logo placement, and full responsive acceptance remain separate stage 3 work.
+The three theme/asset mappings and random selection on each birthday entry are implemented locally. Background illustrations retain their aspect ratio, bottom anchor, and recorded side overflow. Photo and placeholder share the theme border. Per-theme previews and emulator captures are included. Age artwork and heading/photo/logo layout are now implemented; final acceptance is tracked below.
+
+## Header checkpoint
+
+The birthday header renders dynamic uppercase name text, supplied number artwork and pluralized month/year labels. Age uses completed calendar anniversaries, clamped to the last available day for month-end and leap-day birthdays; newborns show zero months. Age boundary tests cover these decisions. Photo/logo positioning and responsive layouts are implemented for final review.
+
+## Stage 3 review checkpoint
+
+Includes dynamic completed calendar age, supplied number/swirl artwork, long-name handling, all three themes, photo/logo layout following annotated spacing, and edge-to-edge background with safely inset controls. Build, age-boundary unit tests, lint, emulator navigation/recreation and theme rendering checks are run before review. The stage-3 tag remains deferred until the final PR is accepted and merged.

@@ -37,3 +37,7 @@ BirthdayTheme maps each variant to its measured colors and supplied illustration
 ## Code documentation
 
 Keep concise purpose/responsibility KDoc on classes, interfaces, enums and named objects. Function comments, including composable KDoc, should explain non-obvious behavior, constraints or intent; omit descriptions that repeat clear names or implementation.
+
+## Emulator test workflow
+
+Use `python3 scripts/RunEmulatorTests.py` with the project's Gradle JDK configured in `JAVA_HOME`. It builds both APKs, installs them with `adb install -r`, and invokes the instrumentation runner directly, leaving the app and its private storage installed. Use `--serial` when multiple devices are connected and `--test-class` to limit the run. Avoid Gradle connected-test cleanup on an emulator containing review data. Navigation tests restore the existing profile; persistence tests use isolated storage. This workflow preserves data during updates; it does not restore data already removed by an uninstall.

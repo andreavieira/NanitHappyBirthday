@@ -12,4 +12,4 @@ Develop in order. Detail and completeness matter more than finishing all stages.
 
 Clarify edge cases while implementing: future birthdays, newborn zero months, leap-day and month-end birthdays, cancellation and failed camera capture, image persistence, name overflow and small-screen layout. Do not treat proposed policies as PDF requirements.
 
-Status: stage 1 accepted after build, unit tests, lint and emulator review. Stage 2 was accepted and merged. Stage 3 navigation is implemented; theme, age artwork, and final layout are pending. Stages 4-5 remain unimplemented.
+Status: stage 1 accepted after build, unit tests, lint and emulator review. Stage 2 was accepted and merged. Stage 3 navigation, themes, age artwork and layout are implemented and awaiting final review. Stages 4-5 remain unimplemented.
