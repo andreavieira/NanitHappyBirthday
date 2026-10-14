@@ -12,7 +12,7 @@ Select a theme once on screen entry and retain it during recomposition and photo
 
 Figma reports BentonSans medium, title 21 design px and age label 18 design px. Use FontFamily.SansSerif with medium headings unless a licensed font is supplied; font substitution is permitted. Use sp and support font scaling.
 
-- Back/close: use the supplied iOS left-arrow artwork (18 × 15 export inside a 24 × 24 icon slot), #394562, at top-left within system insets; proposed 16 dp edge margin and at least 48 dp touch target. Exact Android placement is an implementation decision.
+- Back/close: use the supplied iOS left-arrow artwork (18 × 15 export inside a 24 × 24 icon slot), #394562, at top-left within system insets; 16 dp margin from the safe content edges and an explicit 48 dp touch target. The 18 × 15 export sits at x=3/y=5 in its 24 × 24 slot to preserve measured Figma padding. The app-level Scaffold supplies system-bar insets. Android placement is an implementation decision.
 - Share the news: use the inspected iOS coral #EF7B7B pill (179 × 42 reference, radius 21), white 16 px text and exported share-arrow artwork. Center below the baby image and logo over the illustration. Adapt to an Android touch target of at least 48 dp and tune placement during visual review.
 - Camera: center its badge on the circle border at 45 degrees; separate visual size from accessible touch target.
 

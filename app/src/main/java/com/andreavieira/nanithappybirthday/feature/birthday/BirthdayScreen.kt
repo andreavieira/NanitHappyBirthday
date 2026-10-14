@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -36,7 +37,6 @@ fun BirthdayScreen(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val closeLabel = stringResource(R.string.close_birthday)
     Box(modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center).padding(24.dp),
@@ -52,8 +52,25 @@ fun BirthdayScreen(
                 AsyncImage(photoPath, stringResource(R.string.baby_photo_description), photoModifier, contentScale = ContentScale.Crop)
             }
         }
-        IconButton(onClick = onClose, modifier = Modifier.align(Alignment.TopStart).padding(8.dp).semantics { contentDescription = closeLabel }) {
-            Image(painterResource(R.drawable.birthday_back), contentDescription = null, modifier = Modifier.size(18.dp, 15.dp))
+        BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(16.dp))
+    }
+}
+
+/** Preserves the supplied icon geometry while providing an accessible Android touch target. */
+@Composable
+private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val label = stringResource(R.string.close_birthday)
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.size(48.dp).semantics { contentDescription = label },
+    ) {
+        // The export is the inner Union; restore its measured padding in the 24 dp Figma slot.
+        Box(Modifier.size(24.dp)) {
+            Image(
+                painter = painterResource(R.drawable.birthday_back),
+                contentDescription = null,
+                modifier = Modifier.offset(3.dp, 5.dp).size(18.dp, 15.dp),
+            )
         }
     }
 }

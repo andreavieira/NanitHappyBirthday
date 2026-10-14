@@ -25,6 +25,9 @@ def main():
     existing = subprocess.run([ADB, "-s", SERIAL, "shell", "pidof", "screenrecord"], capture_output=True, text=True)
     if existing.stdout.strip():
         raise RuntimeError("Another emulator recording is already running; stop it before recording this demo.")
+    # Open the app before recording so unrelated launcher/sign-in screens are excluded.
+    adb("shell", "am", "start", "-W", "-n", "com.andreavieira.nanithappybirthday/.MainActivity")
+    time.sleep(1)
     OUTPUT.parent.mkdir(exist_ok=True)
     recorder = subprocess.Popen([ADB, "-s", SERIAL, "shell", "screenrecord", "--time-limit", "45", "--size", "720x1600", REMOTE_VIDEO])
     try:
@@ -43,6 +46,8 @@ def main():
         recorder.wait(timeout=15)
         adb("pull", REMOTE_VIDEO, str(OUTPUT))
         adb("shell", "rm", REMOTE_VIDEO)
+    adb("pull", "/sdcard/Android/data/com.andreavieira.nanithappybirthday/files/BirthdayNavigation.png",
+        str(PROJECT / "outputs/BirthdayNavigation.png"))
     print(f"Recording: {OUTPUT}")
 
 
