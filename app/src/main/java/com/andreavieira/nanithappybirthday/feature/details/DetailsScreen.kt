@@ -2,18 +2,11 @@ package com.andreavieira.nanithappybirthday.feature.details
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import coil.compose.AsyncImage
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,35 +19,42 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalInspectionMode
-import kotlinx.coroutines.delay
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.ui.theme.DetailsTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlinx.coroutines.delay
 
 @Composable
 fun DetailsScreen(
@@ -69,11 +69,12 @@ fun DetailsScreen(
     onDismissError: () -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .imePadding()
-            .verticalScroll(rememberScrollState())
-            .padding(24.dp),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         DetailsHeader()
@@ -99,10 +100,11 @@ private fun BabyNameField(uiState: DetailsUiState, onNameChange: (String) -> Uni
         label = { Text(stringResource(R.string.baby_name)) },
         singleLine = true,
         enabled = uiState.canEdit,
-        keyboardOptions = KeyboardOptions(
-            capitalization = KeyboardCapitalization.Words,
-            imeAction = ImeAction.Done,
-        ),
+        keyboardOptions =
+            KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Done,
+            ),
         modifier = Modifier.fillMaxWidth(),
     )
 }
@@ -111,25 +113,33 @@ private fun BabyNameField(uiState: DetailsUiState, onNameChange: (String) -> Uni
 private fun BirthdayField(uiState: DetailsUiState, onChooseBirthday: () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(stringResource(R.string.birthday), style = MaterialTheme.typography.labelLarge)
-        OutlinedButton(onClick = onChooseBirthday, enabled = uiState.canEdit, modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            onClick = onChooseBirthday,
+            enabled = uiState.canEdit,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
             Text(
                 uiState.birthday?.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
-                    ?: stringResource(R.string.choose_birthday),
+                    ?: stringResource(R.string.choose_birthday)
             )
         }
     }
 }
 
 @Composable
-private fun BabyPhotoSection(uiState: DetailsUiState, onChoosePhoto: () -> Unit, onRemovePhoto: () -> Unit) {
+private fun BabyPhotoSection(
+    uiState: DetailsUiState,
+    onChoosePhoto: () -> Unit,
+    onRemovePhoto: () -> Unit,
+) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(stringResource(R.string.picture), style = MaterialTheme.typography.labelLarge)
-        val photoModifier = Modifier.size(144.dp).clip(CircleShape)
-            .border(4.dp, Color(0xFF6FC5AF), CircleShape)
+        val photoModifier =
+            Modifier.size(144.dp).clip(CircleShape).border(4.dp, Color(0xFF6FC5AF), CircleShape)
         val removeLabel = stringResource(R.string.remove_picture)
         Box(Modifier.size(160.dp), contentAlignment = Alignment.Center) {
             if (uiState.photoPath == null) {
@@ -152,13 +162,20 @@ private fun BabyPhotoSection(uiState: DetailsUiState, onChoosePhoto: () -> Unit,
                 IconButton(
                     onClick = onRemovePhoto,
                     enabled = uiState.canEdit && uiState.pendingSaves == 0,
-                    modifier = Modifier.align(Alignment.TopEnd)
-                        .semantics { contentDescription = removeLabel },
+                    modifier =
+                        Modifier.align(Alignment.TopEnd).semantics {
+                            contentDescription = removeLabel
+                        },
                 ) {
                     Box(
-                        modifier = Modifier.size(32.dp)
-                            .background(MaterialTheme.colorScheme.surface, CircleShape)
-                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, CircleShape),
+                        modifier =
+                            Modifier.size(32.dp)
+                                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outlineVariant,
+                                    CircleShape,
+                                ),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text("×", style = MaterialTheme.typography.titleLarge)
@@ -166,7 +183,10 @@ private fun BabyPhotoSection(uiState: DetailsUiState, onChoosePhoto: () -> Unit,
                 }
             }
         }
-        OutlinedButton(onClick = onChoosePhoto, enabled = uiState.canEdit && uiState.pendingSaves == 0) {
+        OutlinedButton(
+            onClick = onChoosePhoto,
+            enabled = uiState.canEdit && uiState.pendingSaves == 0,
+        ) {
             Text(stringResource(R.string.choose_picture))
         }
     }
@@ -191,7 +211,9 @@ private fun DetailsSaveProgress(uiState: DetailsUiState) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 Text(
-                    stringResource(if (uiState.isLoading) R.string.loading_details else R.string.saving_details),
+                    stringResource(
+                        if (uiState.isLoading) R.string.loading_details else R.string.saving_details
+                    ),
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -200,25 +222,37 @@ private fun DetailsSaveProgress(uiState: DetailsUiState) {
 }
 
 @Composable
-private fun DetailsErrorMessage(uiState: DetailsUiState, onRetry: () -> Unit, onDismissError: () -> Unit) {
+private fun DetailsErrorMessage(
+    uiState: DetailsUiState,
+    onRetry: () -> Unit,
+    onDismissError: () -> Unit,
+) {
     val dismissLabel = stringResource(R.string.dismiss)
     uiState.error?.let { error ->
-        Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
+        Card(
+            colors =
+                CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+        ) {
             Column(Modifier.padding(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        stringResource(when (error) {
-                            DetailsError.LOAD -> R.string.load_failed
-                            DetailsError.REMOVE_PHOTO -> R.string.remove_photo_failed
-                            DetailsError.PHOTO -> R.string.photo_failed
-                            DetailsError.CAMERA -> R.string.photo_app_unavailable
-                        }),
+                        stringResource(
+                            when (error) {
+                                DetailsError.LOAD -> R.string.load_failed
+                                DetailsError.REMOVE_PHOTO -> R.string.remove_photo_failed
+                                DetailsError.PHOTO -> R.string.photo_failed
+                                DetailsError.CAMERA -> R.string.photo_app_unavailable
+                            }
+                        ),
                         modifier = Modifier.weight(1f),
                         color = MaterialTheme.colorScheme.onErrorContainer,
                     )
                     if (error != DetailsError.LOAD) {
                         IconButton(onClick = onDismissError) {
-                            Text("×", modifier = Modifier.semantics { contentDescription = dismissLabel })
+                            Text(
+                                "×",
+                                modifier = Modifier.semantics { contentDescription = dismissLabel },
+                            )
                         }
                     }
                 }
@@ -237,10 +271,11 @@ private fun ShowBirthdayButton(uiState: DetailsUiState, onShowBirthday: () -> Un
     Button(
         onClick = onShowBirthday,
         enabled = uiState.canShowBirthday,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            ),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Text(stringResource(R.string.show_birthday_screen))
@@ -256,21 +291,26 @@ private fun EmptyDetailsPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun ValidDetailsPreview() {
-    DetailsTheme {
-        DetailsScreen(DetailsUiState("Alex", LocalDate.of(2025, 1, 15)), {}, {}, {})
-    }
+    DetailsTheme { DetailsScreen(DetailsUiState("Alex", LocalDate.of(2025, 1, 15)), {}, {}, {}) }
 }
 
-@Preview(name = "Saving details", group = "Details feedback", showBackground = true, widthDp = 360, heightDp = 800)
+@Preview(
+    name = "Saving details",
+    group = "Details feedback",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800,
+)
 @Composable
 private fun SavingDetailsPreview() {
     DetailsTheme {
         DetailsScreen(
-            uiState = DetailsUiState(
-                name = "Alex",
-                birthday = LocalDate.of(2025, 1, 15),
-                pendingSaves = 1,
-            ),
+            uiState =
+                DetailsUiState(
+                    name = "Alex",
+                    birthday = LocalDate.of(2025, 1, 15),
+                    pendingSaves = 1,
+                ),
             onNameChange = {},
             onChooseBirthday = {},
             onShowBirthday = {},
@@ -278,16 +318,23 @@ private fun SavingDetailsPreview() {
     }
 }
 
-@Preview(name = "Photo error — close", group = "Details feedback", showBackground = true, widthDp = 360, heightDp = 800)
+@Preview(
+    name = "Photo error — close",
+    group = "Details feedback",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800,
+)
 @Composable
 private fun PhotoErrorDetailsPreview() {
     DetailsTheme {
         DetailsScreen(
-            uiState = DetailsUiState(
-                name = "Alex",
-                birthday = LocalDate.of(2025, 1, 15),
-                error = DetailsError.PHOTO,
-            ),
+            uiState =
+                DetailsUiState(
+                    name = "Alex",
+                    birthday = LocalDate.of(2025, 1, 15),
+                    error = DetailsError.PHOTO,
+                ),
             onNameChange = {},
             onChooseBirthday = {},
             onShowBirthday = {},
@@ -295,16 +342,23 @@ private fun PhotoErrorDetailsPreview() {
     }
 }
 
-@Preview(name = "Camera unavailable — close", group = "Details feedback", showBackground = true, widthDp = 360, heightDp = 800)
+@Preview(
+    name = "Camera unavailable — close",
+    group = "Details feedback",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800,
+)
 @Composable
 private fun CameraErrorDetailsPreview() {
     DetailsTheme {
         DetailsScreen(
-            uiState = DetailsUiState(
-                name = "Alex",
-                birthday = LocalDate.of(2025, 1, 15),
-                error = DetailsError.CAMERA,
-            ),
+            uiState =
+                DetailsUiState(
+                    name = "Alex",
+                    birthday = LocalDate.of(2025, 1, 15),
+                    error = DetailsError.CAMERA,
+                ),
             onNameChange = {},
             onChooseBirthday = {},
             onShowBirthday = {},
@@ -312,7 +366,13 @@ private fun CameraErrorDetailsPreview() {
     }
 }
 
-@Preview(name = "Load error — retry", group = "Details feedback", showBackground = true, widthDp = 360, heightDp = 800)
+@Preview(
+    name = "Load error — retry",
+    group = "Details feedback",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800,
+)
 @Composable
 private fun LoadErrorDetailsPreview() {
     DetailsTheme {
@@ -325,12 +385,22 @@ private fun LoadErrorDetailsPreview() {
     }
 }
 
-@Preview(name = "Selected photo — remove control", group = "Details feedback", showBackground = true, widthDp = 360, heightDp = 800)
+@Preview(
+    name = "Selected photo — remove control",
+    group = "Details feedback",
+    showBackground = true,
+    widthDp = 360,
+    heightDp = 800,
+)
 @Composable
 private fun SelectedPhotoDetailsPreview() {
     DetailsTheme {
         DetailsScreen(
-            uiState = DetailsUiState(photoPath = "android.resource://com.andreavieira.nanithappybirthday/${R.drawable.baby_placeholder_fox}"),
+            uiState =
+                DetailsUiState(
+                    photoPath =
+                        "android.resource://com.andreavieira.nanithappybirthday/${R.drawable.baby_placeholder_fox}"
+                ),
             onNameChange = {},
             onChooseBirthday = {},
             onShowBirthday = {},

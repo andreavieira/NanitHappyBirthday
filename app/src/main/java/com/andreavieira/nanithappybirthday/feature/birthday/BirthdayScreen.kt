@@ -1,71 +1,71 @@
 package com.andreavieira.nanithappybirthday.feature.birthday
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.requiredSize
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.layer.GraphicsLayer
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.layer.GraphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
 import java.time.LocalDate
@@ -92,16 +92,17 @@ fun BirthdayScreen(
     var shareButtonTop by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
     var shareButtonHeight by remember { mutableStateOf(48.dp) }
-    // The route resets readiness when the path changes; do not overwrite an immediate cache success.
+    // The route resets readiness when the path changes; do not overwrite an immediate cache
+    // success.
     LaunchedEffect(photoPath) { if (photoPath == null) onPhotoReady(true) }
     val scrollState = rememberScrollState()
-    BoxWithConstraints(modifier
-        .fillMaxSize()
-        .clipToBounds()) {
+    BoxWithConstraints(modifier.fillMaxSize().clipToBounds()) {
         val windowHeight = this.maxHeight
         val windowWidth = this.maxWidth
         val layoutHeight =
-            windowHeight - contentPadding.calculateTopPadding() - contentPadding.calculateBottomPadding()
+            windowHeight -
+                contentPadding.calculateTopPadding() -
+                contentPadding.calculateBottomPadding()
         BirthdayArtwork(
             name = name,
             age = age,
@@ -141,27 +142,23 @@ fun BirthdayScreen(
                     theme,
                     with(density) { photoBounds.width.toDp() },
                     photoChoiceEnabled,
-                    onChoosePhoto
+                    onChoosePhoto,
                 )
             }
         }
         if (onShare != null && shareButtonTop > 0f) {
             BirthdayShareButton(
-                onShare, shareEnabled,
-                Modifier
-                    .align(Alignment.TopCenter)
+                onShare,
+                shareEnabled,
+                Modifier.align(Alignment.TopCenter)
                     .offset { IntOffset(0, shareButtonTop.toInt()) }
                     .onSizeChanged { shareButtonHeight = with(density) { it.height.toDp() } },
             )
         }
-        Box(Modifier
-            .fillMaxSize()
-            .padding(contentPadding)) {
+        Box(Modifier.fillMaxSize().padding(contentPadding)) {
             BirthdayBackButton(
                 onClose,
-                Modifier
-                    .align(Alignment.TopStart)
-                    .padding(start = 4.dp, top = 4.dp)
+                Modifier.align(Alignment.TopStart).padding(start = 4.dp, top = 4.dp),
             )
         }
     }
@@ -198,11 +195,13 @@ private fun BirthdayShareImageRenderer(
         layoutHeight = layoutHeight,
         onPhotoBounds = {},
         onShareButtonTop = {},
-        modifier = Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
-            .requiredSize(windowWidth, exportHeight)
-            .clearAndSetSemantics {}
-            // Record without drawing on screen; full height preserves content hidden by scrolling.
-            .drawWithContent { shareImageLayer.record { this@drawWithContent.drawContent() } },
+        modifier =
+            Modifier.wrapContentSize(Alignment.TopStart, unbounded = true)
+                .requiredSize(windowWidth, exportHeight)
+                .clearAndSetSemantics {}
+                // Record without drawing on screen; full height preserves content hidden by
+                // scrolling.
+                .drawWithContent { shareImageLayer.record { this@drawWithContent.drawContent() } },
         onPhotoReady = onPhotoReady,
     )
 }
@@ -223,13 +222,9 @@ private fun BirthdayArtwork(
     modifier: Modifier = Modifier,
     onPhotoReady: (Boolean) -> Unit = {},
 ) {
-    Box(modifier
-        .fillMaxSize()
-        .background(theme.backgroundColor)) {
+    Box(modifier.fillMaxSize().background(theme.backgroundColor)) {
         BirthdayBackgroundIllustration(theme)
-        Box(Modifier
-            .fillMaxSize()
-            .padding(contentPadding)) {
+        Box(Modifier.fillMaxSize().padding(contentPadding)) {
             BirthdayContent(
                 name,
                 age,
@@ -241,7 +236,7 @@ private fun BirthdayArtwork(
                 onShareButtonTop,
                 onPhotoReady,
                 scrollState,
-                layoutHeight
+                layoutHeight,
             )
         }
     }
@@ -249,7 +244,10 @@ private fun BirthdayArtwork(
 
 @Composable
 private fun BirthdayContent(
-    name: String, age: BirthdayAge, photoPath: String?, theme: BirthdayTheme,
+    name: String,
+    age: BirthdayAge,
+    photoPath: String?,
+    theme: BirthdayTheme,
     reserveShareSpace: Boolean,
     shareButtonHeight: Dp,
     onPhotoBounds: (Rect) -> Unit,
@@ -274,14 +272,14 @@ private fun BirthdayContent(
         val density = LocalDensity.current
         val contentModifier = Modifier.fillMaxWidth()
         val scrollingModifier =
-            if (scrollState == null) contentModifier else contentModifier.verticalScroll(scrollState)
+            if (scrollState == null) contentModifier
+            else contentModifier.verticalScroll(scrollState)
         Column(
             scrollingModifier.padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
-                Modifier
-                    .fillMaxWidth()
+                Modifier.fillMaxWidth()
                     .heightIn(min = photoTop)
                     .padding(top = 20.dp, bottom = 20.dp),
                 contentAlignment = Alignment.Center,
@@ -289,18 +287,22 @@ private fun BirthdayContent(
                 BirthdayHeading(name, age)
             }
             Box(
-                Modifier
-                    .size(photoDiameter)
-                    .onGloballyPositioned { onPhotoBounds(it.boundsInRoot()) }) {
+                Modifier.size(photoDiameter).onGloballyPositioned {
+                    onPhotoBounds(it.boundsInRoot())
+                }
+            ) {
                 BirthdayPhoto(photoPath, theme, photoDiameter, onPhotoReady)
             }
             Spacer(Modifier.height(15.dp))
             Image(
                 painter = painterResource(R.drawable.nanit_logo),
                 contentDescription = stringResource(R.string.nanit_logo_description),
-                modifier = Modifier
-                    .size(58.68.dp, logoHeight)
-                    .onGloballyPositioned { onShareButtonTop(it.boundsInRoot().bottom + with(density) { logoToShareGap.toPx() }) },
+                modifier =
+                    Modifier.size(58.68.dp, logoHeight).onGloballyPositioned {
+                        onShareButtonTop(
+                            it.boundsInRoot().bottom + with(density) { logoToShareGap.toPx() }
+                        )
+                    },
             )
             Spacer(Modifier.height(spaceBelowLogo))
         }
@@ -316,10 +318,10 @@ private fun BirthdayBackgroundIllustration(theme: BirthdayTheme) {
             painter = painterResource(theme.backgroundResource),
             contentDescription = null,
             contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .requiredWidth(illustrationWidth)
-                .aspectRatio(1083f / 1776f),
+            modifier =
+                Modifier.align(Alignment.BottomCenter)
+                    .requiredWidth(illustrationWidth)
+                    .aspectRatio(1083f / 1776f),
         )
     }
 }
@@ -327,10 +329,11 @@ private fun BirthdayBackgroundIllustration(theme: BirthdayTheme) {
 @Composable
 private fun BirthdayHeading(name: String, age: BirthdayAge) {
     val title = stringResource(R.string.birthday_heading, name.trim().uppercase())
-    val ageLabel = androidx.compose.ui.res.pluralStringResource(
-        if (age.inYears) R.plurals.birthday_years_old else R.plurals.birthday_months_old,
-        age.number,
-    )
+    val ageLabel =
+        androidx.compose.ui.res.pluralStringResource(
+            if (age.inYears) R.plurals.birthday_years_old else R.plurals.birthday_months_old,
+            age.number,
+        )
     Column(
         modifier = Modifier.widthIn(max = 312.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -363,15 +366,22 @@ private fun BirthdayHeading(name: String, age: BirthdayAge) {
 
 @Composable
 private fun BirthdayNumber(number: Int) {
-    val resources = listOf(
-        R.drawable.birthday_number_0, R.drawable.birthday_number_1,
-        R.drawable.birthday_number_2, R.drawable.birthday_number_3,
-        R.drawable.birthday_number_4, R.drawable.birthday_number_5,
-        R.drawable.birthday_number_6, R.drawable.birthday_number_7,
-        R.drawable.birthday_number_8, R.drawable.birthday_number_9,
-        R.drawable.birthday_number_10, R.drawable.birthday_number_11,
-        R.drawable.birthday_number_12,
-    )
+    val resources =
+        listOf(
+            R.drawable.birthday_number_0,
+            R.drawable.birthday_number_1,
+            R.drawable.birthday_number_2,
+            R.drawable.birthday_number_3,
+            R.drawable.birthday_number_4,
+            R.drawable.birthday_number_5,
+            R.drawable.birthday_number_6,
+            R.drawable.birthday_number_7,
+            R.drawable.birthday_number_8,
+            R.drawable.birthday_number_9,
+            R.drawable.birthday_number_10,
+            R.drawable.birthday_number_11,
+            R.drawable.birthday_number_12,
+        )
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(22.dp),
@@ -379,23 +389,22 @@ private fun BirthdayNumber(number: Int) {
         Image(
             painterResource(R.drawable.birthday_swirl_left),
             null,
-            Modifier.size(50.2.dp, 43.53.dp)
+            Modifier.size(50.2.dp, 43.53.dp),
         )
         Row(
-            Modifier
-                .height(88.dp)
-                .clearAndSetSemantics { contentDescription = number.toString() },
-            verticalAlignment = Alignment.CenterVertically
+            Modifier.height(88.dp).clearAndSetSemantics { contentDescription = number.toString() },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // Use the supplied compound artwork through 12; compose digits for larger ages.
-            val artwork = if (number <= 12) listOf(resources[number]) else number.toString()
-                .map { resources[it.digitToInt()] }
+            val artwork =
+                if (number <= 12) listOf(resources[number])
+                else number.toString().map { resources[it.digitToInt()] }
             artwork.forEach { resource ->
                 val painter = painterResource(resource)
                 Image(
-                    painter, null,
-                    Modifier
-                        .height(88.dp)
+                    painter,
+                    null,
+                    Modifier.height(88.dp)
                         .width(88.dp * painter.intrinsicSize.width / painter.intrinsicSize.height),
                 )
             }
@@ -403,7 +412,7 @@ private fun BirthdayNumber(number: Int) {
         Image(
             painterResource(R.drawable.birthday_swirl_right),
             null,
-            Modifier.size(50.2.dp, 43.53.dp)
+            Modifier.size(50.2.dp, 43.53.dp),
         )
     }
 }
@@ -413,13 +422,13 @@ private fun BirthdayPhoto(
     photoPath: String?,
     theme: BirthdayTheme,
     diameter: Dp,
-    onReady: (Boolean) -> Unit
+    onReady: (Boolean) -> Unit,
 ) {
-    val modifier = Modifier
-        .size(diameter)
-        .clip(CircleShape)
-        .background(theme.placeholderColor)
-        .border(7.dp, theme.borderColor.copy(alpha = 0.78f), CircleShape)
+    val modifier =
+        Modifier.size(diameter)
+            .clip(CircleShape)
+            .background(theme.placeholderColor)
+            .border(7.dp, theme.borderColor.copy(alpha = 0.78f), CircleShape)
     if (photoPath == null) {
         Image(
             painter = painterResource(theme.placeholderResource),
@@ -454,9 +463,7 @@ private fun BirthdayCameraButton(
     IconButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier
-            .offset(center + diagonal - 24.dp, center - diagonal - 24.dp)
-            .size(48.dp),
+        modifier = Modifier.offset(center + diagonal - 24.dp, center - diagonal - 24.dp).size(48.dp),
     ) {
         Image(
             painterResource(theme.cameraResource),
@@ -470,21 +477,20 @@ private fun BirthdayCameraButton(
 private fun BirthdayShareButton(
     onClick: () -> Unit,
     enabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier
-            .heightIn(min = 48.dp)
-            .widthIn(min = 179.dp),
+        modifier = modifier.heightIn(min = 48.dp).widthIn(min = 179.dp),
         shape = RoundedCornerShape(21.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFEF7B7B),
-            contentColor = Color.White,
-            disabledContainerColor = Color(0xFFEF7B7B),
-            disabledContentColor = Color.White.copy(alpha = 0.7f),
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFEF7B7B),
+                contentColor = Color.White,
+                disabledContainerColor = Color(0xFFEF7B7B),
+                disabledContentColor = Color.White.copy(alpha = 0.7f),
+            ),
     ) {
         Text(
             stringResource(R.string.share_the_news),
@@ -503,18 +509,14 @@ private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifie
     val label = stringResource(R.string.close_birthday)
     IconButton(
         onClick = onClick,
-        modifier = modifier
-            .size(48.dp)
-            .semantics { contentDescription = label },
+        modifier = modifier.size(48.dp).semantics { contentDescription = label },
     ) {
         // The export is the inner Union; restore its measured padding in the 24 dp Figma slot.
         Box(Modifier.size(24.dp)) {
             Image(
                 painter = painterResource(R.drawable.birthday_back),
                 contentDescription = null,
-                modifier = Modifier
-                    .offset(3.dp, 5.dp)
-                    .size(18.dp, 15.dp),
+                modifier = Modifier.offset(3.dp, 5.dp).size(18.dp, 15.dp),
             )
         }
     }
@@ -525,7 +527,7 @@ private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifie
     group = "Birthday themes",
     showBackground = true,
     widthDp = 360,
-    heightDp = 800
+    heightDp = 800,
 )
 @Composable
 private fun FoxBirthdayPreview() {
@@ -538,7 +540,7 @@ private fun FoxBirthdayPreview() {
             onChoosePhoto = {},
             onShare = {},
             theme = BirthdayTheme.FOX,
-            today = LocalDate.of(2025, 2, 15)
+            today = LocalDate.of(2025, 2, 15),
         )
     }
 }
@@ -548,7 +550,7 @@ private fun FoxBirthdayPreview() {
     group = "Birthday themes",
     showBackground = true,
     widthDp = 360,
-    heightDp = 800
+    heightDp = 800,
 )
 @Composable
 private fun ElephantBirthdayPreview() {
@@ -561,7 +563,7 @@ private fun ElephantBirthdayPreview() {
             onChoosePhoto = {},
             onShare = {},
             theme = BirthdayTheme.ELEPHANT,
-            today = LocalDate.of(2025, 11, 15)
+            today = LocalDate.of(2025, 11, 15),
         )
     }
 }
@@ -571,7 +573,7 @@ private fun ElephantBirthdayPreview() {
     group = "Birthday themes",
     showBackground = true,
     widthDp = 360,
-    heightDp = 800
+    heightDp = 800,
 )
 @Composable
 private fun PelicanBirthdayPreview() {
@@ -584,7 +586,7 @@ private fun PelicanBirthdayPreview() {
             onChoosePhoto = {},
             onShare = {},
             theme = BirthdayTheme.PELICAN,
-            today = LocalDate.of(2026, 1, 15)
+            today = LocalDate.of(2026, 1, 15),
         )
     }
 }
@@ -594,7 +596,7 @@ private fun PelicanBirthdayPreview() {
     group = "Birthday header",
     showBackground = true,
     widthDp = 360,
-    heightDp = 800
+    heightDp = 800,
 )
 @Composable
 private fun LongNameBirthdayPreview() {
@@ -606,7 +608,7 @@ private fun LongNameBirthdayPreview() {
             {},
             onChoosePhoto = {},
             onShare = {},
-            today = LocalDate.of(2025, 12, 15)
+            today = LocalDate.of(2025, 12, 15),
         )
     }
 }
@@ -617,7 +619,7 @@ private fun LongNameBirthdayPreview() {
     showBackground = true,
     widthDp = 320,
     heightDp = 568,
-    fontScale = 1.5f
+    fontScale = 1.5f,
 )
 @Composable
 private fun SmallScreenBirthdayPreview() {
@@ -629,7 +631,7 @@ private fun SmallScreenBirthdayPreview() {
             {},
             onChoosePhoto = {},
             onShare = {},
-            today = LocalDate.of(2025, 12, 15)
+            today = LocalDate.of(2025, 12, 15),
         )
     }
 }

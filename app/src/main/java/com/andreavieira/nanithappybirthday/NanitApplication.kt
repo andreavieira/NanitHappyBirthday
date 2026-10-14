@@ -9,6 +9,9 @@ import com.andreavieira.nanithappybirthday.platform.photo.PrivateProfilePhotos
 /** Owns the app-wide profile repository and its single DataStore instance. */
 class NanitApplication : Application() {
     val profileRepository by lazy {
-        DefaultProfileRepository(DataStoreProfileStore(profileDataStore), PrivateProfilePhotos(this))
+        DefaultProfileRepository(
+            DataStoreProfileStore(profileDataStore),
+            PrivateProfilePhotos(this),
+        )
     }
 }

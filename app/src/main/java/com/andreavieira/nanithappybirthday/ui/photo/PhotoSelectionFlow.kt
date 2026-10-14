@@ -10,17 +10,24 @@ internal fun PhotoSelectionFlow(
     onLaunchFailed: () -> Unit,
 ) {
     // Keep launchers registered while the dialog is hidden and an external app is open.
-    val chooseGalleryPhoto = rememberGalleryPhotoPicker(
-        onPhotoSelected = { source -> onPhotoSelected(source, {}) },
-        onLaunchFailed = onLaunchFailed,
-    )
+    val chooseGalleryPhoto =
+        rememberGalleryPhotoPicker(
+            onPhotoSelected = { source -> onPhotoSelected(source, {}) },
+            onLaunchFailed = onLaunchFailed,
+        )
     val takeCameraPhoto = rememberCameraPhotoCapture(onPhotoSelected, onLaunchFailed)
 
     if (isVisible) {
         PhotoChoiceDialog(
             onDismiss = onDismiss,
-            onChooseGallery = { onDismiss(); chooseGalleryPhoto() },
-            onTakePhoto = { onDismiss(); takeCameraPhoto() },
+            onChooseGallery = {
+                onDismiss()
+                chooseGalleryPhoto()
+            },
+            onTakePhoto = {
+                onDismiss()
+                takeCameraPhoto()
+            },
         )
     }
 }

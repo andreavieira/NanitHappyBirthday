@@ -3,6 +3,7 @@ package com.andreavieira.nanithappybirthday.feature.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.andreavieira.nanithappybirthday.data.profile.ProfileRepository
+import java.time.LocalDate
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,11 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
-/** Loads the profile, holds editable details, and coordinates photo imports and saving before continuation. */
+/**
+ * Loads the profile, holds editable details, and coordinates photo imports and saving before
+ * continuation.
+ */
 class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() {
-    private val mutableUiState = MutableStateFlow(DetailsUiState(isLoading = true, hasLoadedProfile = false))
+    private val mutableUiState =
+        MutableStateFlow(DetailsUiState(isLoading = true, hasLoadedProfile = false))
     val uiState = mutableUiState.asStateFlow()
     private val saves = Channel<SaveAction>(Channel.UNLIMITED)
 
@@ -38,7 +42,13 @@ class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() 
                     throw cancelled
                 } catch (_: Exception) {
                     mutableUiState.update {
-                        if (it.error == DetailsError.LOAD) it else it.copy(error = if (action == SaveAction.RemovePhoto) DetailsError.REMOVE_PHOTO else DetailsError.PHOTO)
+                        if (it.error == DetailsError.LOAD) it
+                        else
+                            it.copy(
+                                error =
+                                    if (action == SaveAction.RemovePhoto) DetailsError.REMOVE_PHOTO
+                                    else DetailsError.PHOTO
+                            )
                     }
                 } finally {
                     mutableUiState.update { it.copy(pendingSaves = it.pendingSaves - 1) }
@@ -82,7 +92,13 @@ class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() 
     fun selectPhoto(source: String, onFinished: () -> Unit = {}) {
         // Results can return while a newly recreated screen is still loading.
         mutableUiState.update {
-            if (it.error == DetailsError.PHOTO || it.error == DetailsError.CAMERA || it.error == DetailsError.REMOVE_PHOTO) it.copy(error = null) else it
+            if (
+                it.error == DetailsError.PHOTO ||
+                    it.error == DetailsError.CAMERA ||
+                    it.error == DetailsError.REMOVE_PHOTO
+            )
+                it.copy(error = null)
+            else it
         }
         enqueue(SaveAction.Photo(source, onFinished))
     }
@@ -95,19 +111,24 @@ class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() 
 
     fun reportCameraError() {
         mutableUiState.update {
-            if (it.error == DetailsError.LOAD) it
-            else it.copy(error = DetailsError.CAMERA)
+            if (it.error == DetailsError.LOAD) it else it.copy(error = DetailsError.CAMERA)
         }
     }
+
     fun dismissPhotoError() {
         mutableUiState.update {
-            if (it.error == DetailsError.PHOTO || it.error == DetailsError.CAMERA || it.error == DetailsError.REMOVE_PHOTO) it.copy(error = null) else it
+            if (
+                it.error == DetailsError.PHOTO ||
+                    it.error == DetailsError.CAMERA ||
+                    it.error == DetailsError.REMOVE_PHOTO
+            )
+                it.copy(error = null)
+            else it
         }
     }
 
     fun retry() {
         if (uiState.value.error == DetailsError.LOAD) viewModelScope.launch { loadProfile() }
-
     }
 
     // Persist the current draft before continuing, but a disk failure must not block the card.
@@ -136,6 +157,7 @@ class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() 
     private sealed interface SaveAction {
         /** Clears the stored photo and restores the placeholder after successful removal. */
         data object RemovePhoto : SaveAction
+
         /** Carries a photo source URI and cleanup callback to run after the import attempt. */
         data class Photo(val source: String, val onFinished: () -> Unit) : SaveAction
     }

@@ -13,11 +13,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andreavieira.nanithappybirthday.R
-import com.andreavieira.nanithappybirthday.ui.theme.DetailsTheme
 import com.andreavieira.nanithappybirthday.ui.photo.PhotoSelectionFlow
-import kotlinx.coroutines.launch
+import com.andreavieira.nanithappybirthday.ui.theme.DetailsTheme
 import java.time.LocalDate
 import java.time.ZoneId
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailsRoute(
@@ -68,7 +68,9 @@ private fun DetailsRouteContent(
     PhotoSelectionFlow(
         isVisible = showPhotoPicker,
         onDismiss = { showPhotoPicker = false },
-        onPhotoSelected = { source, onFinished -> detailsViewModel.selectPhoto(source, onFinished) },
+        onPhotoSelected = { source, onFinished ->
+            detailsViewModel.selectPhoto(source, onFinished)
+        },
         onLaunchFailed = detailsViewModel::reportCameraError,
     )
 }
@@ -81,11 +83,16 @@ private fun showBirthdayPicker(
     val today = LocalDate.now()
     val initial = birthday ?: today
     DatePickerDialog(
-        context,
-        R.style.Theme_NanitHappyBirthday_DetailsDatePicker,
-        { _, year, month, day -> onDateSelected(LocalDate.of(year, month + 1, day)) },
-        initial.year, initial.monthValue - 1, initial.dayOfMonth,
-    ).apply {
-        datePicker.maxDate = today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    }.show()
+            context,
+            R.style.Theme_NanitHappyBirthday_DetailsDatePicker,
+            { _, year, month, day -> onDateSelected(LocalDate.of(year, month + 1, day)) },
+            initial.year,
+            initial.monthValue - 1,
+            initial.dayOfMonth,
+        )
+        .apply {
+            datePicker.maxDate =
+                today.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        }
+        .show()
 }
