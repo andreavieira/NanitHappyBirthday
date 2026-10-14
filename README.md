@@ -4,7 +4,7 @@ Android implementation of Nanit's Happy Birthday assignment using Kotlin and Jet
 
 ## Status
 
-Project foundation and design resources are in place. The five assignment stages are planned; feature implementation has not started.
+Stage 1 details UI is implemented: name, birthday picker, picture placeholder and required-field validation. Durable persistence, photo selection and birthday-screen navigation follow in stages 2-3.
 
 ## Build and run
 
@@ -14,7 +14,7 @@ Open this directory in Android Studio, select JDK 17 as the Gradle JDK, sync, an
 ./gradlew assembleDebug testDebugUnitTest lintDebug
 ```
 
-The starter and resource import pass debug assembly and lint. No feature tests exist yet; device and visual validation are pending.
+Debug assembly, three form-validation unit tests and lint pass. The details screen was installed and launched on an emulator without a crash. Full interactive/device review remains pending.
 
 ## Implementation
 
@@ -38,3 +38,5 @@ Single activity and app module. Compose screens use ViewModel/StateFlow and life
 5. Shareable birthday image.
 
 Use focused commits and stage tags after validation. Supplied Nanit artwork is proprietary and restricted to this assignment.
+
+At this stage, Show birthday screen confirms that details are ready; the birthday destination is implemented in stage 3. SavedStateHandle restores the form after configuration changes/system recreation, but durable relaunch persistence belongs to stage 2.

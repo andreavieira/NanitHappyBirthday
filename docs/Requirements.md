@@ -12,4 +12,4 @@ Develop in order. Detail and completeness matter more than finishing all stages.
 
 Clarify edge cases while implementing: future birthdays, newborn zero months, leap-day and month-end birthdays, cancellation and failed camera capture, image persistence, name overflow and small-screen layout. Do not treat proposed policies as PDF requirements.
 
-Status: starter infrastructure only; no assignment stage completed.
+Status: stage 1 implemented and build-verified; interactive acceptance review pending. Later stages remain unimplemented.

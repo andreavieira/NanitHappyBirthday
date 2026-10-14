@@ -1,4 +1,10 @@
 <resources>
-<string name="app_name">Nanit Happy Birthday</string>
-<string name="starter_message">Project ready. Next: build the details screen together.</string>
+    <string name="app_name">Nanit Happy Birthday</string>
+    <string name="baby_name">Baby’s name</string>
+    <string name="birthday">Birthday</string>
+    <string name="choose_birthday">Choose birthday</string>
+    <string name="picture">Picture</string>
+    <string name="baby_placeholder_description">Default baby picture</string>
+    <string name="show_birthday_screen">Show birthday screen</string>
+    <string name="details_ready">Details are ready.</string>
 </resources>

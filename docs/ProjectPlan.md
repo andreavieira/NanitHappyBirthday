@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: project foundation and resources complete; assignment stages pending. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 UI and validation implemented; build, three validation tests and lint pass. Emulator launch/initial rendering checked. Interactive acceptance review remains pending before the stage-1 tag. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|
