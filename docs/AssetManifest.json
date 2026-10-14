@@ -1,0 +1,158 @@
+[
+  {
+    "source": "Elephant/BG_Android_Elephant.png",
+    "sha256": "6dd99cd547b43a114184f01a577d1fd84e019460cdd7ca93532e6aa2c7eae5d6",
+    "resource": "app/src/main/res/drawable-nodpi/birthday_background_elephant.png",
+    "theme": "Elephant"
+  },
+  {
+    "source": "Elephant/Default_place_holder_yellow Copy.svg",
+    "sha256": "23e9a67b7449434c617e4575ad02667b040cd6060f5856e651b125ddea0a4730",
+    "resource": "app/src/main/res/drawable/baby_placeholder_elephant.xml",
+    "theme": "Elephant"
+  },
+  {
+    "source": "Elephant/bg.svg",
+    "sha256": "8e07b01a6f8ad2b736c900f55c42185f28f33e44075f8536a081ef90b9e86eb3",
+    "resource": "app/src/main/res/drawable/camera_badge_background_elephant.xml",
+    "theme": "Elephant"
+  },
+  {
+    "source": "Fox/Default_place_holder_green.svg",
+    "sha256": "e0f1086cfbb441c380c0a8b6a1a80885d871656517b5eab461e17ea1d111dc1f",
+    "resource": "app/src/main/res/drawable/baby_placeholder_fox.xml",
+    "theme": "Fox"
+  },
+  {
+    "source": "Fox/Group 50.svg",
+    "sha256": "0863242260b1feaa04ab3ce616933123864715df89f4121cc644d68b1e30840e",
+    "resource": "app/src/main/res/drawable/camera_badge_fox.xml",
+    "theme": "Fox"
+  },
+  {
+    "source": "Fox/android_foxxxxhdpi (1).png",
+    "sha256": "de0139a7237de16dfab3eb63bd11cefa4fd1aafa1ab052d21408c00728463b86",
+    "resource": "app/src/main/res/drawable-nodpi/birthday_background_fox.png",
+    "theme": "Fox"
+  },
+  {
+    "source": "Pelican/BG_Android_Pelican.png",
+    "sha256": "1c7d9cbc0e44e2da2c51621325e6fbf5c863b01fe5558dc82c33be39f99b79dc",
+    "resource": "app/src/main/res/drawable-nodpi/birthday_background_pelican.png",
+    "theme": "Pelican"
+  },
+  {
+    "source": "Pelican/Default_place_holder_green.svg",
+    "sha256": "715f8c8b61ff713c758dd24ceac1e08fb54722023d98ced54f1c81f8459c40c6",
+    "resource": "app/src/main/res/drawable/baby_placeholder_pelican.xml",
+    "theme": "Pelican"
+  },
+  {
+    "source": "Pelican/Group 51.svg",
+    "sha256": "d085b57882c76da3edf592ffa8e57ff85f5b330b58abf1ef02338ca1a56fba64",
+    "resource": "app/src/main/res/drawable/camera_badge_pelican.xml",
+    "theme": "Pelican"
+  },
+  {
+    "source": "Shared/0.svg",
+    "sha256": "d720d3dc297216e701691419e70eb028d15317356a6529c7384fbfb90e95f315",
+    "resource": "app/src/main/res/drawable/birthday_number_0.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/1.svg",
+    "sha256": "17c263548f22a7113be65cccda8c915cf4060e780b928f57b7096a515370b5a3",
+    "resource": "app/src/main/res/drawable/birthday_number_1.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/10.svg",
+    "sha256": "85cf3b55014f40bb6aba1d056c82f41b41aee4d529a2e6dfe9e4eb3ea15f534f",
+    "resource": "app/src/main/res/drawable/birthday_number_10.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/11.svg",
+    "sha256": "8fd50bf41e5ebcf11f3e77239d477ba88a8b8fd0a401abdc0e24540e5b1240ff",
+    "resource": "app/src/main/res/drawable/birthday_number_11.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/12.svg",
+    "sha256": "cfd19aff66ed7b021ebcd81655b185c33558c780d441fbdbb95d2e78b4abcb54",
+    "resource": "app/src/main/res/drawable/birthday_number_12.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/2.svg",
+    "sha256": "3bf6f78b658bbe0e9e4f5090a4e9645102f1880f09da75e0bf9cd234753b14d3",
+    "resource": "app/src/main/res/drawable/birthday_number_2.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/3.svg",
+    "sha256": "bed0bb0164b72d61fbff64caf0902053bbc0af8a13480c98ef7bfcf997184ba8",
+    "resource": "app/src/main/res/drawable/birthday_number_3.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/4.svg",
+    "sha256": "6aba2f9912440e24511687c9157a3516254fc02f15f09994d1d189da6b499389",
+    "resource": "app/src/main/res/drawable/birthday_number_4.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/5.svg",
+    "sha256": "e77a3154902f7ad7da68d0f594bc514fab799dbb52064048f2c0739a6561eca6",
+    "resource": "app/src/main/res/drawable/birthday_number_5.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/6.svg",
+    "sha256": "7a6c19fa7e51d43f501ca9a0dc868dbbb026331ae557453f6b6e4c27224f2da7",
+    "resource": "app/src/main/res/drawable/birthday_number_6.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/7.svg",
+    "sha256": "dd284b4d8534468623ce3d08ca9ef6667e2538260edb26974fde2833d120e840",
+    "resource": "app/src/main/res/drawable/birthday_number_7.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/8.svg",
+    "sha256": "ed0d58ed4990cd350c02261b75430baa321b936461aa87e50b2d1939cf0cf4c7",
+    "resource": "app/src/main/res/drawable/birthday_number_8.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/9.svg",
+    "sha256": "5cabe79dd9927bb996515b3065b1fa87201fd94acaf56a0b6b9d6669e109a356",
+    "resource": "app/src/main/res/drawable/birthday_number_9.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/Left swirls.svg",
+    "sha256": "fc325980f668014ff9f874592524040358183faaeba288c81def8bae6030057b",
+    "resource": "app/src/main/res/drawable/birthday_swirl_left.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/Right swirls.svg",
+    "sha256": "5318446d819b7dd3522bb071468613ba7d47293c43c1ae3b1272d8a5ff241e40",
+    "resource": "app/src/main/res/drawable/birthday_swirl_right.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/nanit.svg",
+    "sha256": "c4e0c97f816b9b3c2838c08fa5bb667075409027825aac255ce5003756d85a96",
+    "resource": "app/src/main/res/drawable/nanit_logo.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Elephant/Group 49.svg",
+    "sha256": "86734ba041db2f9fc71dcb80365f761908b4a16c2e18f4b937245a8b6bdd0a16",
+    "resource": "app/src/main/res/drawable/camera_badge_elephant.xml",
+    "theme": "Elephant"
+  }
+]
