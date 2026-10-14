@@ -21,9 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.feature.details.DetailsError
 import com.andreavieira.nanithappybirthday.feature.details.DetailsViewModel
-import com.andreavieira.nanithappybirthday.ui.photo.PhotoChoiceDialog
-import com.andreavieira.nanithappybirthday.ui.photo.rememberCameraPhotoCapture
-import com.andreavieira.nanithappybirthday.ui.photo.rememberGalleryPhotoPicker
+import com.andreavieira.nanithappybirthday.ui.photo.PhotoSelectionFlow
 import java.time.LocalDate
 
 @Composable
@@ -40,13 +38,7 @@ fun BirthdayRoute(
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
 
-    // Platform launchers reuse the details flow; the shared ViewModel serializes durable photo imports.
-    var showPhotoChoice by rememberSaveable { mutableStateOf(false) }
-    val chooseGallery = rememberGalleryPhotoPicker(detailsViewModel::selectPhoto, detailsViewModel::reportCameraError)
-    val takePhoto = rememberCameraPhotoCapture(
-        onPhotoSelected = { source, onFinished -> detailsViewModel.selectPhoto(source, onFinished) },
-        onLaunchFailed = detailsViewModel::reportCameraError,
-    )
+    var showPhotoPicker by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(state.error) {
         val message = when (state.error) {
             DetailsError.PHOTO -> R.string.photo_failed
@@ -68,22 +60,21 @@ fun BirthdayRoute(
             contentPadding = contentPadding,
             onChoosePhoto = {
                 detailsViewModel.dismissPhotoError()
-                showPhotoChoice = true
+                showPhotoPicker = true
             },
             photoChoiceEnabled = state.canEdit && state.pendingSaves == 0,
         )
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).padding(contentPadding))
     }
-    if (showPhotoChoice) {
-        MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(
-            primary = Color(0xFF394562),
-            surfaceContainerHigh = theme.backgroundColor,
-        )) {
-            PhotoChoiceDialog(
-                onDismiss = { showPhotoChoice = false },
-                onChooseGallery = { showPhotoChoice = false; chooseGallery() },
-                onTakePhoto = { showPhotoChoice = false; takePhoto() },
-            )
-        }
+    MaterialTheme(colorScheme = MaterialTheme.colorScheme.copy(
+        primary = Color(0xFF394562),
+        surfaceContainerHigh = theme.backgroundColor,
+    )) {
+        PhotoSelectionFlow(
+            isVisible = showPhotoPicker,
+            onDismiss = { showPhotoPicker = false },
+            onPhotoSelected = { source, onFinished -> detailsViewModel.selectPhoto(source, onFinished) },
+            onLaunchFailed = detailsViewModel::reportCameraError,
+        )
     }
 }

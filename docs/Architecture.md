@@ -28,7 +28,7 @@ Name/date save failure returns a result for snackbar feedback and does not block
 
 ## Shared photo selection UI
 
-`ui/photo` contains the gallery launcher, camera capture launcher, and source-choice dialog for reuse by the details and birthday screens. These helpers expose callbacks without depending on a feature ViewModel or repository. The caller decides how to import and persist the selected image, and invokes the camera completion callback after import so temporary capture files can be removed safely. `platform/photo` owns FileProvider URI creation and file operations. The birthday-specific date picker stays in `feature/details` until another feature needs it.
+`ui/photo/PhotoSelectionFlow` coordinates the shared source dialog and gallery/camera launchers for both routes. Each route owns its saveable `showPhotoPicker` visibility, theme and error handling. Gallery and camera implementations remain separate helpers in `ui/photo`. Launchers stay composed even when the dialog is hidden so external activity results can return safely. These helpers expose callbacks without depending on a feature ViewModel or repository. The caller decides how to import and persist the selected image, and invokes the camera completion callback after import so temporary capture files can be removed safely. `platform/photo` owns FileProvider URI creation and file operations. The birthday-specific date picker stays in `feature/details` until another feature needs it.
 
 ## Birthday theme selection
 
