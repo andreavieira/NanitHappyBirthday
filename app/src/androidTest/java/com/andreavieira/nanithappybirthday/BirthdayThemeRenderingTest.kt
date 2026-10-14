@@ -37,7 +37,7 @@ class BirthdayThemeRenderingTest {
                     activity.setContent {
                         MaterialTheme {
                             Scaffold(containerColor = theme.backgroundColor, contentWindowInsets = WindowInsets.safeDrawing) { padding ->
-                                BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = theme, contentPadding = padding)
+                                BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = theme, contentPadding = padding, onChoosePhoto = {})
                             }
                         }
                     }

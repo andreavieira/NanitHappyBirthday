@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.andreavieira.nanithappybirthday.feature.birthday.BirthdayScreen
+import com.andreavieira.nanithappybirthday.feature.birthday.BirthdayRoute
 import com.andreavieira.nanithappybirthday.feature.birthday.BirthdayTheme
 import com.andreavieira.nanithappybirthday.feature.birthday.chooseBirthdayTheme
 import com.andreavieira.nanithappybirthday.feature.details.DetailsRoute
@@ -59,10 +59,11 @@ fun NanitApp() {
         snackbarHost = { SnackbarHost(snackbarHost) },
     ) { padding ->
         if (showingBirthday) {
-            BirthdayScreen(
+            BirthdayRoute(
                 name = name,
                 birthday = LocalDate.ofEpochDay(birthdayEpochDay),
-                photoPath = photoPath,
+                initialPhotoPath = photoPath,
+                detailsViewModel = detailsViewModel,
                 theme = selectedTheme,
                 onClose = { showingBirthday = false },
                 contentPadding = padding,

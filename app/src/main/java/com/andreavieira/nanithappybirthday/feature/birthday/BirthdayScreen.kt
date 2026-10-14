@@ -59,18 +59,23 @@ fun BirthdayScreen(
     theme: BirthdayTheme = BirthdayTheme.FOX,
     today: LocalDate = LocalDate.now(),
     contentPadding: PaddingValues = PaddingValues(),
+    onChoosePhoto: (() -> Unit)? = null,
+    photoChoiceEnabled: Boolean = true,
 ) {
     Box(modifier.fillMaxSize().background(theme.backgroundColor).clipToBounds()) {
         BirthdayIllustration(theme)
         Box(Modifier.fillMaxSize().padding(contentPadding)) {
-            BirthdayContent(name, birthdayAge(birthday, today), photoPath, theme)
+            BirthdayContent(name, birthdayAge(birthday, today), photoPath, theme, onChoosePhoto, photoChoiceEnabled)
             BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(start = 4.dp, top = 4.dp))
         }
     }
 }
 
 @Composable
-private fun BirthdayContent(name: String, age: BirthdayAge, photoPath: String?, theme: BirthdayTheme) {
+private fun BirthdayContent(
+    name: String, age: BirthdayAge, photoPath: String?, theme: BirthdayTheme,
+    onChoosePhoto: (() -> Unit)?, photoChoiceEnabled: Boolean,
+) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val availableHeight = this.maxHeight
         val availableWidth = this.maxWidth
@@ -88,7 +93,12 @@ private fun BirthdayContent(name: String, age: BirthdayAge, photoPath: String?, 
             ) {
                 BirthdayHeading(name, age)
             }
-            BirthdayPhoto(photoPath, theme, photoDiameter)
+            Box(Modifier.size(photoDiameter)) {
+                BirthdayPhoto(photoPath, theme, photoDiameter)
+                if (onChoosePhoto != null) {
+                    BirthdayCameraButton(theme, photoDiameter, photoChoiceEnabled, onChoosePhoto)
+                }
+            }
             Spacer(Modifier.height(15.dp))
             Image(
                 painter = painterResource(R.drawable.nanit_logo),
@@ -208,6 +218,30 @@ private fun BirthdayPhoto(photoPath: String?, theme: BirthdayTheme, diameter: an
 }
 
 @Composable
+private fun BirthdayCameraButton(
+    theme: BirthdayTheme,
+    diameter: androidx.compose.ui.unit.Dp,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    // Center the badge's 48 dp touch target on the ring at 45°, independently of its 36 dp artwork.
+    val center = diameter / 2
+    val ringRadius = center - 3.5.dp
+    val diagonal = ringRadius / kotlin.math.sqrt(2f)
+    IconButton(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier.offset(center + diagonal - 24.dp, center - diagonal - 24.dp).size(48.dp),
+    ) {
+        Image(
+            painterResource(theme.cameraResource),
+            contentDescription = stringResource(R.string.choose_picture),
+            modifier = Modifier.size(36.dp),
+        )
+    }
+}
+
+@Composable
 private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     val label = stringResource(R.string.close_birthday)
     IconButton(
@@ -228,26 +262,26 @@ private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifie
 @Preview(name = "Fox", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun FoxBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.FOX, today = LocalDate.of(2025, 2, 15)) }
+    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, theme = BirthdayTheme.FOX, today = LocalDate.of(2025, 2, 15)) }
 }
 
 @Preview(name = "Elephant", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun ElephantBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.ELEPHANT, today = LocalDate.of(2025, 11, 15)) }
+    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, theme = BirthdayTheme.ELEPHANT, today = LocalDate.of(2025, 11, 15)) }
 }
 
 @Preview(name = "Pelican", group = "Birthday themes", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun PelicanBirthdayPreview() {
-    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, theme = BirthdayTheme.PELICAN, today = LocalDate.of(2026, 1, 15)) }
+    MaterialTheme { BirthdayScreen("Alex", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, theme = BirthdayTheme.PELICAN, today = LocalDate.of(2026, 1, 15)) }
 }
 
 @Preview(name = "Long name", group = "Birthday header", showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 private fun LongNameBirthdayPreview() {
     MaterialTheme {
-        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, today = LocalDate.of(2025, 12, 15))
+        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, today = LocalDate.of(2025, 12, 15))
     }
 }
 
@@ -255,6 +289,6 @@ private fun LongNameBirthdayPreview() {
 @Composable
 private fun SmallScreenBirthdayPreview() {
     MaterialTheme {
-        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, today = LocalDate.of(2025, 12, 15))
+        BirthdayScreen("Cristiano Ronaldo", LocalDate.of(2025, 1, 15), null, {}, onChoosePhoto = {}, today = LocalDate.of(2025, 12, 15))
     }
 }
