@@ -154,5 +154,17 @@
     "sha256": "86734ba041db2f9fc71dcb80365f761908b4a16c2e18f4b937245a8b6bdd0a16",
     "resource": "app/src/main/res/drawable/camera_badge_elephant.xml",
     "theme": "Elephant"
+  },
+  {
+    "source": "Shared/Union.svg",
+    "sha256": "54679e6485970adb2e08e02b4714048a48498f31f339dac9fa05995141c927de",
+    "resource": "app/src/main/res/drawable/birthday_back.xml",
+    "theme": "Shared"
+  },
+  {
+    "source": "Shared/ic_share.svg",
+    "sha256": "81c98be6c2e053e42c1386ee91dda9bf4d830936a3dfeae83b8fda4f316e6160",
+    "resource": "app/src/main/res/drawable/birthday_share.xml",
+    "theme": "Shared"
   }
 ]

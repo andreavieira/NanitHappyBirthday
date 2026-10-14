@@ -53,7 +53,7 @@ fun BirthdayScreen(
             }
         }
         IconButton(onClick = onClose, modifier = Modifier.align(Alignment.TopStart).padding(8.dp).semantics { contentDescription = closeLabel }) {
-            Text("×", style = MaterialTheme.typography.headlineMedium)
+            Image(painterResource(R.drawable.birthday_back), contentDescription = null, modifier = Modifier.size(18.dp, 15.dp))
         }
     }
 }
