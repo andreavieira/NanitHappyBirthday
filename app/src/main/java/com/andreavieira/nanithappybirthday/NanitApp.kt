@@ -1,6 +1,7 @@
 package com.andreavieira.nanithappybirthday
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -19,6 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.andreavieira.nanithappybirthday.feature.birthday.BirthdayScreen
+import com.andreavieira.nanithappybirthday.feature.birthday.BirthdayTheme
+import com.andreavieira.nanithappybirthday.feature.birthday.chooseBirthdayTheme
 import com.andreavieira.nanithappybirthday.feature.details.DetailsRoute
 import com.andreavieira.nanithappybirthday.feature.details.DetailsViewModel
 import kotlinx.coroutines.launch
@@ -32,21 +35,32 @@ fun NanitApp() {
     val detailsViewModel: DetailsViewModel = viewModel(factory = viewModelFactory {
         initializer { DetailsViewModel(application.profileRepository) }
     })
+
+    // Destination snapshot: stable across recomposition and activity recreation.
     var showingBirthday by rememberSaveable { mutableStateOf(false) }
     var name by rememberSaveable { mutableStateOf("") }
     var birthdayEpochDay by rememberSaveable { mutableStateOf(0L) }
     var photoPath by rememberSaveable { mutableStateOf<String?>(null) }
+    var themeName by rememberSaveable { mutableStateOf(BirthdayTheme.FOX.name) }
+
+    // Save-failure feedback belongs to the app flow so it survives switching screens.
     val snackbarHost = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val saveFailedMessage = stringResource(R.string.save_failed)
 
+    val selectedTheme = BirthdayTheme.valueOf(themeName)
+
     BackHandler(enabled = showingBirthday) { showingBirthday = false }
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHost) }) { padding ->
+    Scaffold(
+        containerColor = if (showingBirthday) selectedTheme.backgroundColor else MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(snackbarHost) },
+    ) { padding ->
         if (showingBirthday) {
             BirthdayScreen(
                 name = name,
                 birthday = LocalDate.ofEpochDay(birthdayEpochDay),
                 photoPath = photoPath,
+                theme = selectedTheme,
                 onClose = { showingBirthday = false },
                 modifier = Modifier.padding(padding),
             )
@@ -57,6 +71,7 @@ fun NanitApp() {
                     name = draft.name.trim()
                     birthdayEpochDay = requireNotNull(draft.birthday).toEpochDay()
                     photoPath = draft.photoPath
+                    themeName = chooseBirthdayTheme().name
                     showingBirthday = true
                     if (!saved) scope.launch { snackbarHost.showSnackbar(saveFailedMessage) }
                 },

@@ -29,3 +29,7 @@ Name/date save failure returns a result for snackbar feedback and does not block
 ## Shared photo selection UI
 
 `ui/photo` contains the gallery launcher, camera capture launcher, and source-choice dialog for reuse by the details and birthday screens. These helpers expose callbacks without depending on a feature ViewModel or repository. The caller decides how to import and persist the selected image, and invokes the camera completion callback after import so temporary capture files can be removed safely. `platform/photo` owns FileProvider URI creation and file operations. The birthday-specific date picker stays in `feature/details` until another feature needs it.
+
+## Birthday theme selection
+
+BirthdayTheme maps each variant to its measured colors and supplied illustration, placeholder, and camera resources. NanitApp chooses a theme only when handling entry to the birthday destination and stores its enum name with rememberSaveable alongside the displayed profile snapshot. Recomposition and activity recreation preserve that selection; closing and entering again performs another independent choice, which may repeat the previous variant. BirthdayScreen receives its theme explicitly and separates illustration, heading, photo, and back-control rendering. The app container uses the same theme background around system insets.

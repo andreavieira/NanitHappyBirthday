@@ -46,3 +46,7 @@ Propose commit title/body before creating commits. After approval, push the feat
 - `stage-4` and `stage-5`: created only after their respective requirements and verification are complete.
 
 Before final submission, verify each annotated stage tag exists on origin and resolves to the final accepted commit for that stage. Intermediate PR merges do not mark an assignment stage complete.
+
+## Current theme checkpoint
+
+The three theme/asset mappings and random selection on each birthday entry are implemented locally. Background illustrations retain their aspect ratio, bottom anchor, and recorded side overflow. Photo and placeholder share the theme border. Per-theme previews and emulator captures are included. Age artwork, final heading/photo/logo placement, and full responsive acceptance remain separate stage 3 work.
