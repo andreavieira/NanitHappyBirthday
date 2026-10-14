@@ -43,16 +43,47 @@ fun BirthdayScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
         ) {
-            Text(name, style = MaterialTheme.typography.headlineMedium, textAlign = TextAlign.Center, maxLines = 2)
-            Text(birthday.toString())
-            val photoModifier = Modifier.size(200.dp).clip(CircleShape)
-            if (photoPath == null) {
-                Image(painterResource(R.drawable.baby_placeholder_fox), stringResource(R.string.baby_placeholder_description), photoModifier)
-            } else {
-                AsyncImage(photoPath, stringResource(R.string.baby_photo_description), photoModifier, contentScale = ContentScale.Crop)
-            }
+            BirthdayHeading(name, birthday)
+            BirthdayPhoto(photoPath)
         }
         BirthdayBackButton(onClose, Modifier.align(Alignment.TopStart).padding(16.dp))
+    }
+}
+
+/** Groups the provisional name/date heading; age artwork will replace the raw date later. */
+@Composable
+private fun BirthdayHeading(name: String, birthday: LocalDate) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+            maxLines = 2,
+        )
+        Text(birthday.toString())
+    }
+}
+
+/** Displays the placeholder or selected image using the same circular photo bounds. */
+@Composable
+private fun BirthdayPhoto(photoPath: String?) {
+    val modifier = Modifier.size(200.dp).clip(CircleShape)
+    if (photoPath == null) {
+        Image(
+            painter = painterResource(R.drawable.baby_placeholder_fox),
+            contentDescription = stringResource(R.string.baby_placeholder_description),
+            modifier = modifier,
+        )
+    } else {
+        AsyncImage(
+            model = photoPath,
+            contentDescription = stringResource(R.string.baby_photo_description),
+            modifier = modifier,
+            contentScale = ContentScale.Crop,
+        )
     }
 }
 

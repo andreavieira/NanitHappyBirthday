@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged. Stage 3 navigation is implemented; the remaining stage 3 subtasks and stages 4-5 are pending. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged; stage-2 points to its final merge commit. Stage 3 navigation is implemented; the remaining stage 3 subtasks and stages 4-5 are pending. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|
@@ -37,3 +37,12 @@ Create an initial foundation commit, then focused feature commits. Add annotated
 ## Review workflow
 
 Propose commit title/body before creating commits. After approval, push the feature branch and open a draft pull request for review in Files changed. Merge only after approval. A stage tag marks the latest approved stage checkpoint; update it only when approved stage changes are merged. Do not tag an unreviewed feature branch as complete.
+
+## Deliverable checkpoints
+
+- `stage-1`: final accepted details-form checkpoint (`3361865`).
+- `stage-2`: final accepted persistence checkpoint, including all stage 2 refinements (`3a4ed08`).
+- `stage-3`: not created yet. Navigation and component refactoring are intermediate work; themes, random selection, age artwork, final design, and acceptance verification must be complete first.
+- `stage-4` and `stage-5`: created only after their respective requirements and verification are complete.
+
+Before final submission, verify each annotated stage tag exists on origin and resolves to the final accepted commit for that stage. Intermediate PR merges do not mark an assignment stage complete.
