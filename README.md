@@ -4,7 +4,7 @@ Android implementation of Nanit's Happy Birthday assignment using Kotlin and Jet
 
 ## Status
 
-Stage 1 is accepted. Stage 2 adds persistent name/birthday, gallery and camera selection, and durable private photo storage; review is pending. Birthday-screen navigation follows in stage 3.
+Stages 1 and 2 are accepted. Stage 3 currently adds birthday-screen navigation with close/back handling; themed artwork and age presentation are pending.
 
 ## Build and run
 
@@ -39,8 +39,12 @@ Single activity and app module. Compose screens use ViewModel/StateFlow and life
 
 Use focused commits and stage tags after validation. Supplied Nanit artwork is proprietary and restricted to this assignment.
 
-At this stage, Show birthday screen confirms that details are ready; the birthday destination is implemented in stage 3. DataStore restores the form after relaunch. Name and birthday save when Show birthday screen is tapped. A save failure shows a snackbar and permits continuation with the in-memory draft. Initial load failures offer Retry. Photo imports retain the existing picture on failure or cancellation; images over 20 MB are rejected.
+Show birthday screen opens the birthday destination; its final artwork and age presentation follow in subsequent stage 3 changes. DataStore restores the form after relaunch. Name and birthday save when Show birthday screen is tapped. A save failure shows a snackbar and permits continuation with the in-memory draft. Initial load failures offer Retry. Photo imports retain the existing picture on failure or cancellation; images over 20 MB are rejected.
 
 ## Device checks
 
 With an emulator/device connected, run `./gradlew connectedDebugAndroidTest` for the isolated storage recreation test. For manual review, edit name/date, select a gallery picture, force-stop and reopen the app, then check camera capture and cancellation. The app uses the system photo picker (with document-picker fallback) and external camera capture; broad gallery/camera permissions are not requested. Personal test images belong on the device only and are not repository assets.
+
+## UI review recording
+
+With an emulator running and a compatible JDK selected via JAVA_HOME, run `python3 scripts/RecordNavigationDemo.py`. The script builds and installs the debug app/test APK, records the navigation test, and saves `outputs/NavigationDemo.mp4`. The test temporarily changes name/date and restores the prior stored values afterward; the recording may show the emulator’s current selected photo. Review media stays out of Git and can be attached to the PR separately.

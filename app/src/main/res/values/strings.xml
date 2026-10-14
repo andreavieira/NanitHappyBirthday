@@ -22,4 +22,5 @@
     <string name="dismiss">Dismiss</string>
     <string name="remove_picture">Remove picture</string>
     <string name="remove_photo_failed">Could not remove your picture. Tap Choose picture to try again.</string>
+    <string name="close_birthday">Close birthday screen</string>
 </resources>
