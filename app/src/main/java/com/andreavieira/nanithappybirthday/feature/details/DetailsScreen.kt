@@ -46,11 +46,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.ui.theme.DetailsTheme
 import com.andreavieira.nanithappybirthday.ui.theme.NanitColors
+import com.andreavieira.nanithappybirthday.ui.theme.NanitDimens
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -74,8 +74,8 @@ fun DetailsScreen(
                 .fillMaxSize()
                 .imePadding()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+                .padding(NanitDimens.ScreenPadding),
+        verticalArrangement = Arrangement.spacedBy(DetailsDimens.SectionSpacing),
     ) {
         DetailsHeader()
         BabyNameField(uiState, onNameChange)
@@ -111,7 +111,7 @@ private fun BabyNameField(uiState: DetailsUiState, onNameChange: (String) -> Uni
 
 @Composable
 private fun BirthdayField(uiState: DetailsUiState, onChooseBirthday: () -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(DetailsDimens.FieldSpacing)) {
         Text(stringResource(R.string.birthday), style = MaterialTheme.typography.labelLarge)
         OutlinedButton(
             onClick = onChooseBirthday,
@@ -135,13 +135,15 @@ private fun BabyPhotoSection(
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(DetailsDimens.FieldSpacing),
     ) {
         Text(stringResource(R.string.picture), style = MaterialTheme.typography.labelLarge)
         val photoModifier =
-            Modifier.size(144.dp).clip(CircleShape).border(4.dp, NanitColors.FoxBorder, CircleShape)
+            Modifier.size(DetailsDimens.PhotoDiameter)
+                .clip(CircleShape)
+                .border(DetailsDimens.PhotoBorderWidth, NanitColors.FoxBorder, CircleShape)
         val removeLabel = stringResource(R.string.remove_picture)
-        Box(Modifier.size(160.dp), contentAlignment = Alignment.Center) {
+        Box(Modifier.size(DetailsDimens.PhotoContainerSize), contentAlignment = Alignment.Center) {
             if (uiState.photoPath == null) {
                 Image(
                     painter = painterResource(R.drawable.baby_placeholder_fox),
@@ -169,10 +171,10 @@ private fun BabyPhotoSection(
                 ) {
                     Box(
                         modifier =
-                            Modifier.size(32.dp)
+                            Modifier.size(DetailsDimens.RemovePhotoVisualSize)
                                 .background(MaterialTheme.colorScheme.surface, CircleShape)
                                 .border(
-                                    1.dp,
+                                    DetailsDimens.RemovePhotoBorderWidth,
                                     MaterialTheme.colorScheme.outlineVariant,
                                     CircleShape,
                                 ),
@@ -206,9 +208,9 @@ private fun DetailsSaveProgress(uiState: DetailsUiState) {
         }
     }
     // Reserve a fixed feedback area so the button and photo never move when saving starts.
-    Box(Modifier.fillMaxWidth().height(48.dp)) {
+    Box(Modifier.fillMaxWidth().height(DetailsDimens.ProgressSlotHeight)) {
         if (uiState.isLoading || (isSaving && (showSaving || isPreview))) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(DetailsDimens.FieldSpacing)) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 Text(
                     stringResource(
@@ -233,7 +235,7 @@ private fun DetailsErrorMessage(
             colors =
                 CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
         ) {
-            Column(Modifier.padding(12.dp)) {
+            Column(Modifier.padding(DetailsDimens.ErrorPadding)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         stringResource(

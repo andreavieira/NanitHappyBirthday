@@ -69,6 +69,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
 import com.andreavieira.nanithappybirthday.ui.theme.NanitColors
+import com.andreavieira.nanithappybirthday.ui.theme.NanitDimens
 import java.time.LocalDate
 
 @Composable
@@ -92,7 +93,7 @@ fun BirthdayScreen(
     var photoBounds by remember { mutableStateOf(Rect.Zero) }
     var shareButtonTop by remember { mutableFloatStateOf(0f) }
     val density = LocalDensity.current
-    var shareButtonHeight by remember { mutableStateOf(48.dp) }
+    var shareButtonHeight by remember { mutableStateOf(NanitDimens.MinimumTouchTarget) }
     // The route resets readiness when the path changes; do not overwrite an immediate cache
     // success.
     LaunchedEffect(photoPath) { if (photoPath == null) onPhotoReady(true) }
@@ -159,7 +160,11 @@ fun BirthdayScreen(
         Box(Modifier.fillMaxSize().padding(contentPadding)) {
             BirthdayBackButton(
                 onClose,
-                Modifier.align(Alignment.TopStart).padding(start = 4.dp, top = 4.dp),
+                Modifier.align(Alignment.TopStart)
+                    .padding(
+                        start = BirthdayDimens.BackTouchInset,
+                        top = BirthdayDimens.BackTouchInset,
+                    ),
             )
         }
     }
@@ -259,30 +264,42 @@ private fun BirthdayContent(
 ) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val availableWidth = this.maxWidth
-        val photoDiameter = (availableWidth - 100.dp).coerceIn(1.dp, 200.dp)
-        val logoHeight = 19.63.dp
+        val photoDiameter =
+            (availableWidth - BirthdayDimens.PhotoSideClearance * 2).coerceIn(
+                1.dp,
+                BirthdayDimens.PhotoDiameter,
+            )
+        val logoHeight = BirthdayDimens.LogoHeight
         // Preserve the established photo/header placement; only Share uses the bottom anchor.
         val photoTop =
-            (layoutHeight / 2 - 122.dp - if (theme == BirthdayTheme.PELICAN) 8.dp else 0.dp)
-                .coerceAtLeast(224.dp)
-        val logoBottom = photoTop + photoDiameter + 15.dp + logoHeight
+            (layoutHeight / 2 -
+                    BirthdayDimens.PhotoVerticalCenterOffset -
+                    if (theme == BirthdayTheme.PELICAN) BirthdayDimens.PelicanPhotoOffset else 0.dp)
+                .coerceAtLeast(BirthdayDimens.MinimumHeadingHeight)
+        val logoBottom = photoTop + photoDiameter + BirthdayDimens.PhotoToLogoSpacing + logoHeight
         val logoToShareGap =
-            (layoutHeight - 53.dp - shareButtonHeight - logoBottom).coerceAtLeast(53.dp)
+            (layoutHeight - NanitDimens.BottomActionClearance - shareButtonHeight - logoBottom)
+                .coerceAtLeast(NanitDimens.BottomActionClearance)
         val spaceBelowLogo =
-            if (reserveShareSpace) logoToShareGap + shareButtonHeight + 53.dp else 24.dp
+            if (reserveShareSpace)
+                logoToShareGap + shareButtonHeight + NanitDimens.BottomActionClearance
+            else NanitDimens.ScreenPadding
         val density = LocalDensity.current
         val contentModifier = Modifier.fillMaxWidth()
         val scrollingModifier =
             if (scrollState == null) contentModifier
             else contentModifier.verticalScroll(scrollState)
         Column(
-            scrollingModifier.padding(horizontal = 24.dp),
+            scrollingModifier.padding(horizontal = NanitDimens.ScreenPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Box(
                 Modifier.fillMaxWidth()
                     .heightIn(min = photoTop)
-                    .padding(top = 20.dp, bottom = 20.dp),
+                    .padding(
+                        top = BirthdayDimens.HeadingEdgePadding,
+                        bottom = BirthdayDimens.HeadingEdgePadding,
+                    ),
                 contentAlignment = Alignment.Center,
             ) {
                 BirthdayHeading(name, age)
@@ -294,12 +311,12 @@ private fun BirthdayContent(
             ) {
                 BirthdayPhoto(photoPath, theme, photoDiameter, onPhotoReady)
             }
-            Spacer(Modifier.height(15.dp))
+            Spacer(Modifier.height(BirthdayDimens.PhotoToLogoSpacing))
             Image(
                 painter = painterResource(R.drawable.nanit_logo),
                 contentDescription = stringResource(R.string.nanit_logo_description),
                 modifier =
-                    Modifier.size(58.68.dp, logoHeight).onGloballyPositioned {
+                    Modifier.size(BirthdayDimens.LogoWidth, logoHeight).onGloballyPositioned {
                         onShareButtonTop(
                             it.boundsInRoot().bottom + with(density) { logoToShareGap.toPx() }
                         )
@@ -314,7 +331,7 @@ private fun BirthdayContent(
 private fun BirthdayBackgroundIllustration(theme: BirthdayTheme) {
     BoxWithConstraints(Modifier.fillMaxSize()) {
         // Recorded layer is 459 wide within a 360-wide frame; clip its side overflow.
-        val illustrationWidth = this.maxWidth * (459f / 360f)
+        val illustrationWidth = this.maxWidth * BirthdayDimens.BackgroundWidthRatio
         Image(
             painter = painterResource(theme.backgroundResource),
             contentDescription = null,
@@ -322,7 +339,7 @@ private fun BirthdayBackgroundIllustration(theme: BirthdayTheme) {
             modifier =
                 Modifier.align(Alignment.BottomCenter)
                     .requiredWidth(illustrationWidth)
-                    .aspectRatio(1083f / 1776f),
+                    .aspectRatio(BirthdayDimens.BackgroundAspectRatio),
         )
     }
 }
@@ -336,28 +353,28 @@ private fun BirthdayHeading(name: String, age: BirthdayAge) {
             age.number,
         )
     Column(
-        modifier = Modifier.widthIn(max = 312.dp),
+        modifier = Modifier.widthIn(max = BirthdayDimens.HeadingMaxWidth),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = title,
-            modifier = Modifier.widthIn(max = 252.dp),
-            fontSize = 21.sp,
-            lineHeight = 23.sp,
-            letterSpacing = (-0.42).sp,
+            modifier = Modifier.widthIn(max = BirthdayDimens.NameMaxWidth),
+            fontSize = BirthdayDimens.HeadingTextSize,
+            lineHeight = BirthdayDimens.HeadingLineHeight,
+            letterSpacing = BirthdayDimens.HeadingLetterSpacing,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             color = NanitColors.BirthdayForeground,
         )
-        Spacer(Modifier.height(13.dp))
+        Spacer(Modifier.height(BirthdayDimens.HeadingToNumberSpacing))
         BirthdayNumber(age.number)
-        Spacer(Modifier.height(14.dp))
+        Spacer(Modifier.height(BirthdayDimens.NumberToAgeLabelSpacing))
         Text(
             text = ageLabel,
-            fontSize = 18.sp,
-            letterSpacing = (-0.36).sp,
+            fontSize = BirthdayDimens.AgeLabelTextSize,
+            letterSpacing = BirthdayDimens.AgeLabelLetterSpacing,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
             color = NanitColors.BirthdayForeground,
@@ -385,15 +402,17 @@ private fun BirthdayNumber(number: Int) {
         )
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(22.dp),
+        horizontalArrangement = Arrangement.spacedBy(BirthdayDimens.SwirlToNumberSpacing),
     ) {
         Image(
             painterResource(R.drawable.birthday_swirl_left),
             null,
-            Modifier.size(50.2.dp, 43.53.dp),
+            Modifier.size(BirthdayDimens.SwirlWidth, BirthdayDimens.SwirlHeight),
         )
         Row(
-            Modifier.height(88.dp).clearAndSetSemantics { contentDescription = number.toString() },
+            Modifier.height(BirthdayDimens.NumberHeight).clearAndSetSemantics {
+                contentDescription = number.toString()
+            },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // Use the supplied compound artwork through 12; compose digits for larger ages.
@@ -405,15 +424,18 @@ private fun BirthdayNumber(number: Int) {
                 Image(
                     painter,
                     null,
-                    Modifier.height(88.dp)
-                        .width(88.dp * painter.intrinsicSize.width / painter.intrinsicSize.height),
+                    Modifier.height(BirthdayDimens.NumberHeight)
+                        .width(
+                            BirthdayDimens.NumberHeight * painter.intrinsicSize.width /
+                                painter.intrinsicSize.height
+                        ),
                 )
             }
         }
         Image(
             painterResource(R.drawable.birthday_swirl_right),
             null,
-            Modifier.size(50.2.dp, 43.53.dp),
+            Modifier.size(BirthdayDimens.SwirlWidth, BirthdayDimens.SwirlHeight),
         )
     }
 }
@@ -429,7 +451,11 @@ private fun BirthdayPhoto(
         Modifier.size(diameter)
             .clip(CircleShape)
             .background(theme.placeholderColor)
-            .border(7.dp, theme.borderColor.copy(alpha = 0.78f), CircleShape)
+            .border(
+                BirthdayDimens.PhotoBorderWidth,
+                theme.borderColor.copy(alpha = 0.78f),
+                CircleShape,
+            )
     if (photoPath == null) {
         Image(
             painter = painterResource(theme.placeholderResource),
@@ -459,17 +485,20 @@ private fun BirthdayCameraButton(
 ) {
     // Center the badge's 48 dp touch target on the ring at 45°, independently of its 36 dp artwork.
     val center = diameter / 2
-    val ringRadius = center - 3.5.dp
+    val ringRadius = center - BirthdayDimens.PhotoBorderWidth / 2
     val diagonal = ringRadius / kotlin.math.sqrt(2f)
+    val touchRadius = NanitDimens.MinimumTouchTarget / 2
     IconButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.offset(center + diagonal - 24.dp, center - diagonal - 24.dp).size(48.dp),
+        modifier =
+            Modifier.offset(center + diagonal - touchRadius, center - diagonal - touchRadius)
+                .size(NanitDimens.MinimumTouchTarget),
     ) {
         Image(
             painterResource(theme.cameraResource),
             contentDescription = stringResource(R.string.choose_picture),
-            modifier = Modifier.size(36.dp),
+            modifier = Modifier.size(BirthdayDimens.CameraIconSize),
         )
     }
 }
@@ -483,8 +512,11 @@ private fun BirthdayShareButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.heightIn(min = 48.dp).widthIn(min = 179.dp),
-        shape = RoundedCornerShape(21.dp),
+        modifier =
+            modifier
+                .heightIn(min = NanitDimens.MinimumTouchTarget)
+                .widthIn(min = BirthdayDimens.ShareMinimumWidth),
+        shape = RoundedCornerShape(BirthdayDimens.ShareCornerRadius),
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = NanitColors.ShareBackground,
@@ -495,13 +527,17 @@ private fun BirthdayShareButton(
     ) {
         Text(
             stringResource(R.string.share_the_news),
-            fontSize = 16.sp,
-            lineHeight = 22.sp,
+            fontSize = NanitDimens.ActionTextSize,
+            lineHeight = NanitDimens.ActionLineHeight,
             fontWeight = FontWeight.Normal,
             letterSpacing = 0.sp,
         )
-        Spacer(Modifier.width(12.dp))
-        Image(painterResource(R.drawable.birthday_share), null, Modifier.size(24.dp))
+        Spacer(Modifier.width(BirthdayDimens.ShareIconSpacing))
+        Image(
+            painterResource(R.drawable.birthday_share),
+            null,
+            Modifier.size(NanitDimens.StandardIconSize),
+        )
     }
 }
 
@@ -510,14 +546,20 @@ private fun BirthdayBackButton(onClick: () -> Unit, modifier: Modifier = Modifie
     val label = stringResource(R.string.close_birthday)
     IconButton(
         onClick = onClick,
-        modifier = modifier.size(48.dp).semantics { contentDescription = label },
+        modifier =
+            modifier.size(NanitDimens.MinimumTouchTarget).semantics { contentDescription = label },
     ) {
         // The export is the inner Union; restore its measured padding in the 24 dp Figma slot.
-        Box(Modifier.size(24.dp)) {
+        Box(Modifier.size(NanitDimens.StandardIconSize)) {
             Image(
                 painter = painterResource(R.drawable.birthday_back),
                 contentDescription = null,
-                modifier = Modifier.offset(3.dp, 5.dp).size(18.dp, 15.dp),
+                modifier =
+                    Modifier.offset(
+                            BirthdayDimens.BackGlyphOffsetX,
+                            BirthdayDimens.BackGlyphOffsetY,
+                        )
+                        .size(BirthdayDimens.BackGlyphWidth, BirthdayDimens.BackGlyphHeight),
             )
         }
     }
