@@ -1,6 +1,6 @@
 # Implementation plan
 
-Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged; stage-2 points to its final merge commit. Stage 3 is accepted and tagged; Stage 4 is implemented locally for review and Stage 5 remains pending. Follow the stages in order and validate each before creating its tag.
+Current status: stage 1 accepted after build, three validation tests, lint and emulator review. The stage-1 tag marks this checkpoint. Stage 2 is accepted and merged; stage-2 points to its final merge commit. Stage 3 is accepted and tagged; Stage 4 is accepted, merged and tagged; Stage 5 is implemented locally for review. Follow the stages in order and validate each before creating its tag.
 
 | Stage | Scope | Acceptance and validation |
 |---|---|---|
@@ -43,7 +43,8 @@ Propose commit title/body before creating commits. After approval, push the feat
 - `stage-1`: final accepted details-form checkpoint (`3361865`).
 - `stage-2`: final accepted persistence checkpoint, including all stage 2 refinements (`3a4ed08`).
 - `stage-3`: final accepted birthday presentation checkpoint (`3f5e8ac`), including themes, age artwork, annotated layout and edge-to-edge rendering.
-- `stage-4` and `stage-5`: created only after their respective requirements and verification are complete.
+- `stage-4`: final accepted birthday photo-update checkpoint, including shared photo-selection coordination (`a1a1e72`).
+- `stage-5`: created only after sharing acceptance, verification and merge.
 
 Before final submission, verify each annotated stage tag exists on origin and resolves to the final accepted commit for that stage. Intermediate PR merges do not mark an assignment stage complete.
 
@@ -59,10 +60,14 @@ The birthday header renders dynamic uppercase name text, supplied number artwork
 
 Includes dynamic completed calendar age, supplied number/swirl artwork, long-name handling, all three themes, photo/logo layout following annotated spacing, and edge-to-edge background with safely inset controls. Build, age-boundary unit tests, lint, emulator navigation/recreation and theme rendering checks are run before review. PR #6 is accepted and merged; stage-3 points to its final merge commit after preview confirmation.
 
-## Stage 4 local implementation
+## Stage 4 accepted implementation
 
 BirthdayRoute reuses the gallery/camera launchers and shared profile ViewModel. The selected photo updates both destinations and persists through the existing repository. The themed 36 dp badge has a 48 dp touch target centered at 45 degrees on the 7 dp ring centerline. Photo imports disable repeated selection until finished; cancellation preserves the photo and theme. Picker/import errors use dismissible snackbar feedback. Acceptance checks cover real system gallery selection, camera capture/cancellation, invalid-photo feedback, persistent copied files, shared photo state, theme preservation and rendering previews.
 
 ## Stage visual evidence gate
 
 Before publishing a stage tag, verify the final checkpoint PR contains screenshots of the delivered UI and, when navigation changes, a short video or screenshot sequence showing the flow. Media must be embedded attachments or linked PR-comment attachments that reviewers can open; relevant earlier PR evidence may be linked. Keep recordings brief and prefer synthetic/placeholder images. A local-only output path does not satisfy this gate. The pull request template records this check alongside validation and acceptance.
+
+## Stage 5 local implementation
+
+The coral Share the news button opens Android’s Sharesheet with the current birthday card as a PNG. The recorded artwork excludes back/camera/share overlays, and export dimensions omit safe system insets. Short screens export the full unscrolled card rather than a clipped viewport. Photo readiness and preparation state prevent incomplete/repeated exports; failures show dismissible feedback. Validation covers all themes, selected-photo content, export dimensions, omitted controls, temporary URI access and Sharesheet cancellation. Stage 5 acceptance/tag remain pending review and merge.

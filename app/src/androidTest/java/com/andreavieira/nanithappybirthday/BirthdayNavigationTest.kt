@@ -60,6 +60,9 @@ class BirthdayNavigationTest {
                 clickShowBirthday(device)
                 assertTrue(device.wait(Until.hasObject(By.desc("Close birthday screen")), 5000))
                 if (recordDemo) SystemClock.sleep(1000)
+                // Wait for Compose's BackHandler registration, not only its first accessibility nodes.
+                instrumentation.waitForIdleSync()
+                device.waitForIdle()
                 device.pressBack()
                 assertTrue(device.wait(Until.hasObject(By.text("Show birthday screen")), 5000))
                 if (recordDemo) SystemClock.sleep(1000)
