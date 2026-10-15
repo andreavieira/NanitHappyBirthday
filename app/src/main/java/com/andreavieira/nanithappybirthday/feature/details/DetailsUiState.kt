@@ -18,6 +18,7 @@ data class DetailsUiState(
     val isLoading: Boolean = false,
     val hasLoadedProfile: Boolean = true,
     val pendingSaves: Int = 0,
+    val detailsSaveFailed: Boolean = false,
     val error: DetailsError? = null,
 ) {
     val canShowBirthday: Boolean

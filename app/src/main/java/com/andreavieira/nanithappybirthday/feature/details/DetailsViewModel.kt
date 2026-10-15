@@ -11,20 +11,26 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
- * Loads the profile, holds editable details, and coordinates photo imports and saving before
- * continuation.
+ * Loads and automatically persists editable details, serializes photo operations, and flushes the
+ * current draft before continuation.
  */
 class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() {
     private val mutableUiState =
         MutableStateFlow(DetailsUiState(isLoading = true, hasLoadedProfile = false))
     val uiState = mutableUiState.asStateFlow()
     private val saves = Channel<SaveAction>(Channel.UNLIMITED)
+    // Coalesce edits while a write is running without disabling typing or screen actions.
+    private val detailsSaves = Channel<Unit>(Channel.CONFLATED)
+    private val detailsSaveMutex = Mutex()
 
     init {
         viewModelScope.launch {
             loadProfile()
+            launch { for (signal in detailsSaves) persistCurrentDetails(reportFailure = true) }
             for (action in saves) {
                 try {
                     if (!uiState.value.hasLoadedProfile) continue
@@ -82,11 +88,13 @@ class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() 
     fun updateName(name: String) {
         if (!uiState.value.canEdit) return
         mutableUiState.update { it.copy(name = name) }
+        detailsSaves.trySend(Unit)
     }
 
     fun updateBirthday(birthday: LocalDate) {
         if (!uiState.value.canEdit) return
         mutableUiState.update { it.copy(birthday = birthday) }
+        detailsSaves.trySend(Unit)
     }
 
     fun selectPhoto(source: String, onFinished: () -> Unit = {}) {
@@ -131,22 +139,36 @@ class DetailsViewModel(private val repository: ProfileRepository) : ViewModel() 
         if (uiState.value.error == DetailsError.LOAD) viewModelScope.launch { loadProfile() }
     }
 
-    // Persist the current draft before continuing, but a disk failure must not block the card.
+    fun dismissDetailsSaveError() {
+        mutableUiState.update { it.copy(detailsSaveFailed = false) }
+    }
+
+    // Flush behind any active autosave; disk failure still permits viewing the in-memory card.
     suspend fun saveBeforeBirthday(): Boolean {
-        val state = uiState.value
-        if (!state.canShowBirthday) return false
+        if (!uiState.value.canShowBirthday) return false
         mutableUiState.update { it.copy(pendingSaves = it.pendingSaves + 1) }
         return try {
-            repository.saveDetails(state.name, state.birthday)
-            true
-        } catch (cancelled: CancellationException) {
-            throw cancelled
-        } catch (_: Exception) {
-            false
+            persistCurrentDetails(reportFailure = false)
         } finally {
             mutableUiState.update { it.copy(pendingSaves = it.pendingSaves - 1) }
         }
     }
+
+    private suspend fun persistCurrentDetails(reportFailure: Boolean): Boolean =
+        detailsSaveMutex.withLock {
+            // Read after acquiring the lock so a queued write cannot restore an older draft.
+            val state = uiState.value
+            try {
+                repository.saveDetails(state.name, state.birthday)
+                mutableUiState.update { it.copy(detailsSaveFailed = false) }
+                true
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                if (reportFailure) mutableUiState.update { it.copy(detailsSaveFailed = true) }
+                false
+            }
+        }
 
     private fun enqueue(action: SaveAction) {
         mutableUiState.update { it.copy(pendingSaves = it.pendingSaves + 1) }

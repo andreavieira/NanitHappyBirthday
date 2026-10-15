@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,20 +24,29 @@ import kotlinx.coroutines.launch
 fun DetailsRoute(
     detailsViewModel: DetailsViewModel,
     onShowBirthday: (DetailsUiState, Boolean) -> Unit,
+    onSaveFailed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    DetailsTheme { DetailsRouteContent(detailsViewModel, onShowBirthday, modifier) }
+    DetailsTheme { DetailsRouteContent(detailsViewModel, onShowBirthday, onSaveFailed, modifier) }
 }
 
 @Composable
 private fun DetailsRouteContent(
     detailsViewModel: DetailsViewModel,
     onShowBirthday: (DetailsUiState, Boolean) -> Unit,
+    onSaveFailed: () -> Unit,
     modifier: Modifier,
 ) {
     val context = LocalContext.current
     val uiState by detailsViewModel.uiState.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(uiState.detailsSaveFailed) {
+        if (uiState.detailsSaveFailed) {
+            detailsViewModel.dismissDetailsSaveError()
+            onSaveFailed()
+        }
+    }
 
     var showPhotoPicker by rememberSaveable { mutableStateOf(false) }
 

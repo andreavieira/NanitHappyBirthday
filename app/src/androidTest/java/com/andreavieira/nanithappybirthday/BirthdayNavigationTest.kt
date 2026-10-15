@@ -3,6 +3,7 @@ package com.andreavieira.nanithappybirthday
 import android.os.SystemClock
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -12,10 +13,12 @@ import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.andreavieira.nanithappybirthday.data.profile.DataStoreProfileStore
 import com.andreavieira.nanithappybirthday.data.profile.profileDataStore
+import com.andreavieira.nanithappybirthday.feature.details.DetailsViewModel
 import java.io.File
 import java.time.LocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -126,6 +129,40 @@ class BirthdayNavigationTest {
                 device.pressBack()
                 assertTrue(device.wait(Until.hasObject(By.text("Show birthday screen")), 5000))
                 if (recordDemo) SystemClock.sleep(1000)
+            }
+        } finally {
+            runBlocking { store.update { previous } }
+        }
+    }
+
+    @Test
+    fun detailsEditsSurviveRelaunchWithoutOpeningBirthday() {
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val app = instrumentation.targetContext.applicationContext as NanitApplication
+        val previous = runBlocking { app.profileRepository.profiles.first() }
+        val store = DataStoreProfileStore(app.profileDataStore)
+        val device = UiDevice.getInstance(instrumentation)
+        try {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                assertTrue(device.wait(Until.hasObject(By.clazz("android.widget.EditText")), 5000))
+                device.findObject(By.clazz("android.widget.EditText")).text = "Unsubmitted details"
+                scenario.onActivity { activity ->
+                    ViewModelProvider(activity)[DetailsViewModel::class.java].updateBirthday(
+                        LocalDate.of(2025, 3, 12)
+                    )
+                }
+                runBlocking {
+                    withTimeout(5000) {
+                        app.profileRepository.profiles.first {
+                            it.name == "Unsubmitted details" &&
+                                it.birthday == LocalDate.of(2025, 3, 12)
+                        }
+                    }
+                }
+            }
+            ActivityScenario.launch(MainActivity::class.java).use {
+                assertTrue(device.wait(Until.hasObject(By.text("Unsubmitted details")), 5000))
+                assertTrue(device.wait(Until.hasObject(By.text("Mar 12, 2025")), 5000))
             }
         } finally {
             runBlocking { store.update { previous } }
