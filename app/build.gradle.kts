@@ -57,9 +57,7 @@ ktfmt {
 }
 
 val kotlinSources =
-    rootProject.fileTree(rootDir) {
-        include("app/src/**/*.kt", "scripts/review/*.kt", "*.gradle.kts", "app/*.gradle.kts")
-    }
+    rootProject.fileTree(rootDir) { include("app/src/**/*.kt", "*.gradle.kts", "app/*.gradle.kts") }
 
 tasks.register<KtfmtFormatTask>("formatKotlin") { source = kotlinSources }
 
