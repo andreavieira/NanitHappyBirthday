@@ -21,7 +21,7 @@ Formatting uses ktfmt's Kotlin style with four-space indentation and a 100-chara
 
 Single activity and app module. Compose screens use ViewModel/StateFlow and lifecycle-aware state collection. A profile repository isolates persistence; camera, gallery and sharing remain at platform boundaries.
 
-DataStore restores the profile after relaunch. Name and birthday save when Show birthday screen is tapped; photo changes persist immediately. A name/date save failure shows a snackbar and permits continuation with the in-memory draft. Photo failures or cancellation preserve the previous image. Images must be readable and smaller than 20 MB.
+DataStore restores the profile after relaunch. Name and birthday save automatically as they change; photo changes persist immediately. Show birthday screen flushes the current details before continuing. A name/date save failure shows a snackbar and permits continuation with the in-memory draft. Photo failures or cancellation preserve the previous image. Images must be readable and smaller than 20 MB.
 
 The birthday screen selects a theme on each entry, displays completed months below one year and completed years afterward, and exports a shareable card without controls or system bars.
 

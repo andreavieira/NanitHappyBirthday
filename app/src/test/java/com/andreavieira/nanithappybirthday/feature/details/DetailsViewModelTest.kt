@@ -8,13 +8,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-/** Verifies draft editing, save-on-continue behavior, and asynchronous photo result handling. */
+/**
+ * Verifies automatic details persistence, continuation flushing, and asynchronous photo results.
+ */
 @OptIn(ExperimentalCoroutinesApi::class)
 class DetailsViewModelTest {
     private val dispatcher = StandardTestDispatcher()
@@ -43,16 +46,77 @@ class DetailsViewModelTest {
         }
 
     @Test
-    fun editsStayInMemoryUntilContinue() =
+    fun editsPersistWithoutContinuationAndLoadInNewViewModel() =
         runTest(dispatcher) {
             val repository = FakeRepository()
             val vm = DetailsViewModel(repository)
             advanceUntilIdle()
             vm.updateName("Alex")
             vm.updateBirthday(LocalDate.of(2025, 1, 15))
+            advanceUntilIdle()
+            val restored = DetailsViewModel(repository)
+            advanceUntilIdle()
+            assertEquals("Alex", restored.uiState.value.name)
+            assertEquals(LocalDate.of(2025, 1, 15), restored.uiState.value.birthday)
+            assertTrue(restored.uiState.value.canShowBirthday)
+        }
+
+    @Test
+    fun incompleteAndClearedNamesArePersisted() =
+        runTest(dispatcher) {
+            val repository = FakeRepository()
+            val vm = DetailsViewModel(repository)
+            advanceUntilIdle()
+            vm.updateName("A")
+            advanceUntilIdle()
+            assertEquals("A", repository.profiles.value.name)
+            assertNull(repository.profiles.value.birthday)
+            vm.updateName("")
+            advanceUntilIdle()
             assertEquals("", repository.profiles.value.name)
-            assertTrue(vm.saveBeforeBirthday())
+            assertFalse(vm.uiState.value.canShowBirthday)
+        }
+
+    @Test
+    fun autosaveFailurePreservesDraftAndRecoversOnNextEdit() =
+        runTest(dispatcher) {
+            val repository = FakeRepository()
+            val vm = DetailsViewModel(repository)
+            advanceUntilIdle()
+            repository.failSave = true
+            vm.updateName("Alex")
+            vm.updateBirthday(LocalDate.of(2025, 1, 15))
+            advanceUntilIdle()
+            assertTrue(vm.uiState.value.detailsSaveFailed)
+            assertTrue(vm.uiState.value.canShowBirthday)
+            assertEquals("Alex", vm.uiState.value.name)
+            vm.dismissDetailsSaveError()
+            assertFalse(vm.uiState.value.detailsSaveFailed)
+            repository.failSave = false
+            vm.updateName("Sam")
+            advanceUntilIdle()
+            assertEquals("Sam", repository.profiles.value.name)
+            assertEquals(LocalDate.of(2025, 1, 15), repository.profiles.value.birthday)
+            assertFalse(vm.uiState.value.detailsSaveFailed)
+        }
+
+    @Test
+    fun queuedEditsAndContinuationCannotRestoreAnOlderDraft() =
+        runTest(dispatcher) {
+            val repository = FakeRepository().apply { saveDelay = 100 }
+            val vm = DetailsViewModel(repository)
+            advanceUntilIdle()
+            vm.updateName("A")
+            runCurrent()
+            vm.updateName("Alex")
+            vm.updateBirthday(LocalDate.of(2025, 1, 15))
+            var continued = false
+            launch { continued = vm.saveBeforeBirthday() }
+            advanceUntilIdle()
+            assertTrue(continued)
             assertEquals("Alex", repository.profiles.value.name)
+            assertEquals(LocalDate.of(2025, 1, 15), repository.profiles.value.birthday)
+            assertEquals(0, vm.uiState.value.pendingSaves)
         }
 
     @Test
@@ -122,9 +186,11 @@ class DetailsViewModelTest {
     private class FakeRepository : ProfileRepository {
         override val profiles = MutableStateFlow(BabyProfile())
         var failSave = false
+        var saveDelay = 0L
         var failPhoto = false
 
         override suspend fun saveDetails(name: String, birthday: LocalDate?) {
+            delay(saveDelay)
             if (failSave) throw IOException("Disk unavailable")
             profiles.value = profiles.value.copy(name = name, birthday = birthday)
         }

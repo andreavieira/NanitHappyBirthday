@@ -83,6 +83,11 @@ fun NanitApp() {
                     showingBirthday = true
                     if (!saved) scope.launch { snackbarHost.showSnackbar(saveFailedMessage) }
                 },
+                onSaveFailed = {
+                    scope.launch {
+                        snackbarHost.showSnackbar(saveFailedMessage, withDismissAction = true)
+                    }
+                },
                 modifier = Modifier.padding(padding),
             )
         }

@@ -117,7 +117,11 @@ class BirthdayPhotoImportTest {
                                         onClose = {
                                             activity.setContent {
                                                 MaterialTheme {
-                                                    DetailsRoute(viewModel, { _, _ -> })
+                                                    DetailsRoute(
+                                                        viewModel,
+                                                        { _, _ -> },
+                                                        onSaveFailed = {},
+                                                    )
                                                 }
                                             }
                                         },
