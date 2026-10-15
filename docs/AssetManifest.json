@@ -12,12 +12,6 @@
     "theme": "Elephant"
   },
   {
-    "source": "Elephant/bg.svg",
-    "sha256": "8e07b01a6f8ad2b736c900f55c42185f28f33e44075f8536a081ef90b9e86eb3",
-    "resource": "app/src/main/res/drawable/camera_badge_background_elephant.xml",
-    "theme": "Elephant"
-  },
-  {
     "source": "Fox/Default_place_holder_green.svg",
     "sha256": "e0f1086cfbb441c380c0a8b6a1a80885d871656517b5eab461e17ea1d111dc1f",
     "resource": "app/src/main/res/drawable/baby_placeholder_fox.xml",
