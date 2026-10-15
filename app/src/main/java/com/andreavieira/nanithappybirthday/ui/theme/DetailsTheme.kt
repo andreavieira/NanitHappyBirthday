@@ -8,15 +8,16 @@ import androidx.compose.ui.graphics.Color
 @Composable
 internal fun DetailsTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = MaterialTheme.colorScheme.copy(
-            primary = Color(0xFF26745F),
-            onPrimary = Color.White,
-            primaryContainer = Color(0xFF6FC5AF),
-            onPrimaryContainer = Color(0xFF123C30),
-            secondary = Color(0xFF26745F),
-            secondaryContainer = Color(0xFFC5E8DF),
-            onSecondaryContainer = Color(0xFF123C30),
-        ),
+        colorScheme =
+            MaterialTheme.colorScheme.copy(
+                primary = NanitColors.DetailsAccent,
+                onPrimary = Color.White,
+                primaryContainer = NanitColors.FoxBorder,
+                onPrimaryContainer = NanitColors.DetailsOnAccentContainer,
+                secondary = NanitColors.DetailsAccent,
+                secondaryContainer = NanitColors.FoxBackground,
+                onSecondaryContainer = NanitColors.DetailsOnAccentContainer,
+            ),
         content = content,
     )
 }

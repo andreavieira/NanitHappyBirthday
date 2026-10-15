@@ -12,14 +12,17 @@ internal fun rememberGalleryPhotoPicker(
     onLaunchFailed: () -> Unit,
 ): () -> Unit {
     // The system picker supplies a URI; the repository copies its contents into private storage.
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        uri?.let { onPhotoSelected(it.toString()) }
-    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let { onPhotoSelected(it.toString()) }
+        }
 
     // Request images only. Dismissing the picker produces no profile update.
     return {
         try {
-            launcher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            launcher.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
         } catch (_: Exception) {
             onLaunchFailed()
         }

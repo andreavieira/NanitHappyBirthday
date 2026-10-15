@@ -18,7 +18,10 @@ internal fun PhotoChoiceDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.choose_picture)) },
         text = {
-            Text(stringResource(R.string.photo_choice_description), style = MaterialTheme.typography.bodyMedium)
+            Text(
+                stringResource(R.string.photo_choice_description),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         },
         confirmButton = {
             TextButton(onClick = onChooseGallery) { Text(stringResource(R.string.gallery)) }

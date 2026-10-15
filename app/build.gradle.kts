@@ -1,4 +1,8 @@
+import com.ncorti.ktfmt.gradle.tasks.KtfmtCheckTask
+import com.ncorti.ktfmt.gradle.tasks.KtfmtFormatTask
+
 plugins {
+    id("com.ncorti.ktfmt.gradle")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
@@ -44,3 +48,19 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     testImplementation("junit:junit:4.13.2")
 }
+
+tasks.named("check") { dependsOn("checkKotlinFormatting") }
+
+ktfmt {
+    kotlinLangStyle()
+    maxWidth.set(100)
+}
+
+val kotlinSources =
+    rootProject.fileTree(rootDir) {
+        include("app/src/**/*.kt", "scripts/review/*.kt", "*.gradle.kts", "app/*.gradle.kts")
+    }
+
+tasks.register<KtfmtFormatTask>("formatKotlin") { source = kotlinSources }
+
+tasks.register<KtfmtCheckTask>("checkKotlinFormatting") { source = kotlinSources }
