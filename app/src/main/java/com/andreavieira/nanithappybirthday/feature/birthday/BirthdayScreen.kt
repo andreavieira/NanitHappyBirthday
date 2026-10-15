@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.andreavieira.nanithappybirthday.R
+import com.andreavieira.nanithappybirthday.ui.theme.NanitColors
 import java.time.LocalDate
 
 @Composable
@@ -348,7 +349,7 @@ private fun BirthdayHeading(name: String, age: BirthdayAge) {
             textAlign = TextAlign.Center,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            color = Color(0xFF394562),
+            color = NanitColors.BirthdayForeground,
         )
         Spacer(Modifier.height(13.dp))
         BirthdayNumber(age.number)
@@ -359,7 +360,7 @@ private fun BirthdayHeading(name: String, age: BirthdayAge) {
             letterSpacing = (-0.36).sp,
             fontWeight = FontWeight.Medium,
             textAlign = TextAlign.Center,
-            color = Color(0xFF394562),
+            color = NanitColors.BirthdayForeground,
         )
     }
 }
@@ -486,9 +487,9 @@ private fun BirthdayShareButton(
         shape = RoundedCornerShape(21.dp),
         colors =
             ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFEF7B7B),
+                containerColor = NanitColors.ShareBackground,
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFFEF7B7B),
+                disabledContainerColor = NanitColors.ShareBackground,
                 disabledContentColor = Color.White.copy(alpha = 0.7f),
             ),
     ) {
