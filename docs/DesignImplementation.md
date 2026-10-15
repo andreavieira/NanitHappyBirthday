@@ -45,3 +45,7 @@ Enable Android edge-to-edge on all supported versions. Render the birthday illus
 ## Sharing implementation
 
 The share control sits at least 53 dp below the logo and 53 dp above the safe bottom edge, with a minimum 48 dp touch target. During export preparation it retains its coral fill while disabled. The exported PNG includes the current theme, heading, age, photo and logo without controls or system bars. On constrained screens, content scrolls and the export retains the full unscrolled card.
+
+## Details action
+
+Show birthday screen uses the same 53 dp safe-bottom spacing and 16 sp regular text, 22 sp line height and zero letter spacing as Share. It keeps the details theme colors and full-width presentation. The form remains scrollable; when content or the keyboard reduces available space, the action follows the content with a minimum 20 dp separation instead of overlapping fields or feedback.

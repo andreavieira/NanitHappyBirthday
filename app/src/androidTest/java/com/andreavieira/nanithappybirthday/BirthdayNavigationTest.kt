@@ -1,6 +1,8 @@
 package com.andreavieira.nanithappybirthday
 
 import android.os.SystemClock
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -8,6 +10,8 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
+import com.andreavieira.nanithappybirthday.data.profile.DataStoreProfileStore
+import com.andreavieira.nanithappybirthday.data.profile.profileDataStore
 import java.io.File
 import java.time.LocalDate
 import kotlinx.coroutines.flow.first
@@ -30,8 +34,16 @@ class BirthdayNavigationTest {
         val recordDemo = InstrumentationRegistry.getArguments().getString("recordDemo") == "true"
         val previous = runBlocking { app.profileRepository.profiles.first() }
         val device = UiDevice.getInstance(instrumentation)
+        val store = DataStoreProfileStore(app.profileDataStore)
+        // Isolate review screenshots from the user's photo without deleting its file.
         runBlocking {
-            app.profileRepository.saveDetails("Navigation test", LocalDate.of(2025, 1, 15))
+            store.update {
+                previous.copy(
+                    name = "Navigation test",
+                    birthday = LocalDate.of(2025, 1, 15),
+                    photoFileName = null,
+                )
+            }
         }
         try {
             ActivityScenario.launch(MainActivity::class.java).use { scenario ->
@@ -40,6 +52,30 @@ class BirthdayNavigationTest {
                         Until.hasObject(By.text("Show birthday screen").enabled(true)),
                         10000,
                     )
+                )
+                var safeBottom = 0
+                scenario.onActivity { activity ->
+                    safeBottom =
+                        requireNotNull(ViewCompat.getRootWindowInsets(activity.window.decorView))
+                            .getInsets(
+                                WindowInsetsCompat.Type.systemBars() or
+                                    WindowInsetsCompat.Type.displayCutout()
+                            )
+                            .bottom
+                }
+                device.waitForIdle()
+                val detailsButton =
+                    requireNotNull(device.findObject(By.text("Show birthday screen")).parent)
+                val expectedBottomGap = 53 * app.resources.displayMetrics.density
+                assertEquals(
+                    "Details action matches Share's safe-bottom spacing",
+                    expectedBottomGap,
+                    (device.displayHeight - safeBottom - detailsButton.visibleBounds.bottom)
+                        .toFloat(),
+                    2f,
+                )
+                device.takeScreenshot(
+                    File(app.getExternalFilesDir(null), "DetailsButtonPlacement.png")
                 )
                 if (recordDemo) SystemClock.sleep(1000)
                 clickShowBirthday(device)
@@ -92,7 +128,7 @@ class BirthdayNavigationTest {
                 if (recordDemo) SystemClock.sleep(1000)
             }
         } finally {
-            runBlocking { app.profileRepository.saveDetails(previous.name, previous.birthday) }
+            runBlocking { store.update { previous } }
         }
     }
 
