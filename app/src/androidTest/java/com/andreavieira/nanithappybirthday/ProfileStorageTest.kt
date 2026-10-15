@@ -10,30 +10,35 @@ import com.andreavieira.nanithappybirthday.data.profile.DataStoreProfileStore
 import com.andreavieira.nanithappybirthday.data.profile.DefaultProfileRepository
 import com.andreavieira.nanithappybirthday.platform.photo.CameraCaptureFiles
 import com.andreavieira.nanithappybirthday.platform.photo.PrivateProfilePhotos
+import java.io.File
+import java.time.LocalDate
+import java.util.UUID
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.first
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.io.File
-import java.time.LocalDate
-import java.util.UUID
 
 /** Verifies that real DataStore metadata and private photo files survive storage recreation. */
 @RunWith(AndroidJUnit4::class)
 class ProfileStorageTest {
-    @Test fun profileAndCopiedPhotoSurviveDataStoreRecreation() = runBlocking {
+    @Test
+    fun profileAndCopiedPhotoSurviveDataStoreRecreation() = runBlocking {
         val app = InstrumentationRegistry.getInstrumentation().targetContext
         val root = File(app.cacheDir, "storage_test_${UUID.randomUUID()}").apply { mkdirs() }
-        val isolated = object : ContextWrapper(app) {
-            override fun getApplicationContext(): Context = this
-            override fun getFilesDir(): File = root
-        }
+        val isolated =
+            object : ContextWrapper(app) {
+                override fun getApplicationContext(): Context = this
+
+                override fun getFilesDir(): File = root
+            }
         val preferences = File(root, "test.preferences_pb")
         var job = SupervisorJob()
-        fun store() = PreferenceDataStoreFactory.create(
-            scope = CoroutineScope(job + Dispatchers.IO), produceFile = { preferences },
-        )
+        fun store() =
+            PreferenceDataStoreFactory.create(
+                scope = CoroutineScope(job + Dispatchers.IO),
+                produceFile = { preferences },
+            )
         val source = CameraCaptureFiles.create(app)
         try {
             app.contentResolver.openOutputStream(source)!!.use {
@@ -42,14 +47,22 @@ class ProfileStorageTest {
                 assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, it))
                 bitmap.recycle()
             }
-            val repository = DefaultProfileRepository(DataStoreProfileStore(store()), PrivateProfilePhotos(isolated))
+            val repository =
+                DefaultProfileRepository(
+                    DataStoreProfileStore(store()),
+                    PrivateProfilePhotos(isolated),
+                )
             repository.saveDetails("Storage test", LocalDate.of(2025, 1, 15))
             val copiedPath = repository.selectPhoto(source.toString())
             CameraCaptureFiles.discard(app, source.toString())
             assertTrue(File(copiedPath).isFile)
             job.cancelAndJoin()
             job = SupervisorJob()
-            val restored = DefaultProfileRepository(DataStoreProfileStore(store()), PrivateProfilePhotos(isolated))
+            val restored =
+                DefaultProfileRepository(
+                    DataStoreProfileStore(store()),
+                    PrivateProfilePhotos(isolated),
+                )
             val profile = restored.profiles.first()
             assertEquals("Storage test", profile.name)
             assertEquals(LocalDate.of(2025, 1, 15), profile.birthday)

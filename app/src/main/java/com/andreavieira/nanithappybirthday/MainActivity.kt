@@ -2,8 +2,8 @@ package com.andreavieira.nanithappybirthday
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 
 /** Hosts the Compose app theme and the two-screen app flow. */
@@ -11,10 +11,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent {
-            MaterialTheme {
-                NanitApp()
-            }
-        }
+        setContent { MaterialTheme { NanitApp() } }
     }
 }

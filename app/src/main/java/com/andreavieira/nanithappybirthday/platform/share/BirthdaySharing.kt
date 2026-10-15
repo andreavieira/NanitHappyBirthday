@@ -12,7 +12,8 @@ import java.util.UUID
 /** Stores shareable card images in a dedicated cache directory and grants temporary read access. */
 object BirthdaySharing {
     fun writeImage(context: Context, bitmap: Bitmap): Uri {
-        val directory = File(context.cacheDir, "birthday-share").apply { check(mkdirs() || isDirectory) }
+        val directory =
+            File(context.cacheDir, "birthday-share").apply { check(mkdirs() || isDirectory) }
         // Keep recent URIs valid for receivers; remove only our exports older than one day.
         val cutoff = System.currentTimeMillis() - 24 * 60 * 60 * 1000L
         directory.listFiles()?.filter { it.lastModified() < cutoff }?.forEach { it.delete() }
@@ -26,10 +27,11 @@ object BirthdaySharing {
         }
     }
 
-    fun shareIntent(context: Context, uri: Uri): Intent = Intent(Intent.ACTION_SEND).apply {
-        type = "image/png"
-        putExtra(Intent.EXTRA_STREAM, uri)
-        clipData = ClipData.newUri(context.contentResolver, "Birthday", uri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
+    fun shareIntent(context: Context, uri: Uri): Intent =
+        Intent(Intent.ACTION_SEND).apply {
+            type = "image/png"
+            putExtra(Intent.EXTRA_STREAM, uri)
+            clipData = ClipData.newUri(context.contentResolver, "Birthday", uri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
 }

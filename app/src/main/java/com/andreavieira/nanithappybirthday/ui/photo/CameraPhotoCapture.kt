@@ -23,17 +23,18 @@ internal fun rememberCameraPhotoCapture(
     var pendingCapture by rememberSaveable { mutableStateOf<String?>(null) }
 
     // Handle the camera result; delete the temporary file only after import or cancellation.
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-        val source = pendingCapture
-        pendingCapture = null
-        if (source != null) {
-            if (success) {
-                onPhotoSelected(source) { CameraCaptureFiles.discard(appContext, source) }
-            } else {
-                CameraCaptureFiles.discard(appContext, source)
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            val source = pendingCapture
+            pendingCapture = null
+            if (source != null) {
+                if (success) {
+                    onPhotoSelected(source) { CameraCaptureFiles.discard(appContext, source) }
+                } else {
+                    CameraCaptureFiles.discard(appContext, source)
+                }
             }
         }
-    }
 
     // Start a new capture with a writable URI supplied through FileProvider.
     return {

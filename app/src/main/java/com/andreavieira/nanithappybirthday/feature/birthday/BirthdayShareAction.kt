@@ -44,16 +44,23 @@ internal fun rememberBirthdayShareAction(
             preparing = true
             scope.launch {
                 try {
-                    val systemInsets = with(density) {
-                        Rect(
-                            padding.calculateLeftPadding(direction).roundToPx(),
-                            padding.calculateTopPadding().roundToPx(),
-                            padding.calculateRightPadding(direction).roundToPx(),
-                            padding.calculateBottomPadding().roundToPx(),
+                    val systemInsets =
+                        with(density) {
+                            Rect(
+                                padding.calculateLeftPadding(direction).roundToPx(),
+                                padding.calculateTopPadding().roundToPx(),
+                                padding.calculateRightPadding(direction).roundToPx(),
+                                padding.calculateBottomPadding().roundToPx(),
+                            )
+                        }
+                    val imageUri =
+                        captureAndSaveBirthdayCard(context, shareImageLayer, systemInsets)
+                    context.startActivity(
+                        Intent.createChooser(
+                            BirthdaySharing.shareIntent(context, imageUri),
+                            context.getString(R.string.share_the_news),
                         )
-                    }
-                    val imageUri = captureAndSaveBirthdayCard(context, shareImageLayer, systemInsets)
-                    context.startActivity(Intent.createChooser(BirthdaySharing.shareIntent(context, imageUri), context.getString(R.string.share_the_news)))
+                    )
                 } catch (cancelled: CancellationException) {
                     throw cancelled
                 } catch (_: Exception) {
@@ -72,17 +79,18 @@ private suspend fun captureAndSaveBirthdayCard(
     systemInsets: Rect,
 ): Uri {
     // Wait for the latest photo/frame before capturing the artwork.
-    withFrameNanos { }
+    withFrameNanos {}
     val capturedBitmap = shareImageLayer.toImageBitmap().asAndroidBitmap()
     try {
         return withContext(Dispatchers.IO) {
-            val cardBitmap = Bitmap.createBitmap(
-                capturedBitmap,
-                systemInsets.left,
-                systemInsets.top,
-                capturedBitmap.width - systemInsets.left - systemInsets.right,
-                capturedBitmap.height - systemInsets.top - systemInsets.bottom,
-            )
+            val cardBitmap =
+                Bitmap.createBitmap(
+                    capturedBitmap,
+                    systemInsets.left,
+                    systemInsets.top,
+                    capturedBitmap.width - systemInsets.left - systemInsets.right,
+                    capturedBitmap.height - systemInsets.top - systemInsets.bottom,
+                )
             try {
                 // Save a PNG and return its temporary, shareable content URI.
                 BirthdaySharing.writeImage(context, cardBitmap)

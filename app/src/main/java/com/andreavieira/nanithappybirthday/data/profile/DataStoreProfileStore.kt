@@ -7,8 +7,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import kotlinx.coroutines.flow.map
 import java.time.LocalDate
+import kotlinx.coroutines.flow.map
 
 val Context.profileDataStore by preferencesDataStore(name = "baby_profile")
 
@@ -22,16 +22,16 @@ class DataStoreProfileStore(private val dataStore: DataStore<Preferences>) : Pro
             preferences[NAME] = updated.name
             updated.birthday?.let { preferences[BIRTHDAY] = it.toEpochDay() }
                 ?: preferences.remove(BIRTHDAY)
-            updated.photoFileName?.let { preferences[PHOTO] = it }
-                ?: preferences.remove(PHOTO)
+            updated.photoFileName?.let { preferences[PHOTO] = it } ?: preferences.remove(PHOTO)
         }
     }
 
-    private fun decode(preferences: Preferences) = BabyProfile(
-        name = preferences[NAME] ?: "",
-        birthday = preferences[BIRTHDAY]?.let(LocalDate::ofEpochDay),
-        photoFileName = preferences[PHOTO],
-    )
+    private fun decode(preferences: Preferences) =
+        BabyProfile(
+            name = preferences[NAME] ?: "",
+            birthday = preferences[BIRTHDAY]?.let(LocalDate::ofEpochDay),
+            photoFileName = preferences[PHOTO],
+        )
 
     private companion object {
         val NAME = stringPreferencesKey("name")

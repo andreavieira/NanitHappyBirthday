@@ -10,7 +10,8 @@ import java.io.IOException
 object CameraCaptureFiles {
     fun create(context: Context): Uri {
         val directory = File(context.cacheDir, "camera")
-        if (!directory.isDirectory && !directory.mkdirs()) throw IOException("Camera storage unavailable")
+        if (!directory.isDirectory && !directory.mkdirs())
+            throw IOException("Camera storage unavailable")
         val file = File.createTempFile("capture_", ".jpg", directory)
         return FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
     }
